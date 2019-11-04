@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Jepicodus.Solution
+namespace JeopicodusAPI
 {
     public class Program
     {

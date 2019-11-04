@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Jepicodus.Solution.Models;
+using Jeopicodus.Models;
 
-namespace Jepicodus.Solution.Controllers
+namespace Jeopicodus.Controllers
 {
     public class HomeController : Controller
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Jepicodus.Solution.Models
+namespace Jeopecodus.Solution.Models
 {
     public class ErrorViewModel
     {
