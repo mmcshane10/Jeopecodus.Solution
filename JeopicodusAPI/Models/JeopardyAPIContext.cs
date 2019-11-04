@@ -6,8 +6,7 @@ namespace JeopicodusAPI.Models
     {
         public JeopicodusAPIContext(DbContextOptions<JeopicodusAPIContext> options)
             : base(options)
-        {
-        }
+        { }
 
         public DbSet<FillInTheBlank> FillInTheBlank { get; set; }
         public DbSet<MultipleChoice> MultipleChoice { get; set; }
@@ -17,7 +16,7 @@ namespace JeopicodusAPI.Models
 
             builder.Entity<MultipleChoice>()
                 .HasData(
-                    new MultipleChoice { MultipleChoiceId = 0, Category = "", Difficulty = "", Prompt = "", Answer = "", Wrong1 = "", Wrong2 = "", Wrong3 = ""},
+                    new MultipleChoice { MultipleChoiceId = 9, Category = "", Difficulty = "", Prompt = "", Answer = "", Wrong1 = "", Wrong2 = "", Wrong3 = ""},
 
                     new MultipleChoice { MultipleChoiceId = 1, Category = "C#", Difficulty = "Hard", Prompt = "Dotnet script is a REPL tool. What does REPL stand for?", Answer = "read-evaluate-print-loop", Wrong1 = "refactor-exchange-print-loop", Wrong2 = "refactor-evaluate-print-locate", Wrong3 = "read-exchange-print-locate" },
 
