@@ -8,7 +8,13 @@ namespace Jeopicodus.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            if(User.Identity.IsAuthenticated)
+            {
+                return View();
+            }
+            else{
+                return RedirectToAction("Login", "Account");
+            }
         }
 
         public IActionResult Privacy()

@@ -32,11 +32,11 @@ namespace Jeopicodus.Controllers
         [HttpPost]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            var user = new ApplicationUser { UserName = model.Email };
+            var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
             IdentityResult result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
             else
             {
@@ -52,10 +52,10 @@ namespace Jeopicodus.Controllers
         [HttpPost]
         public async Task<ActionResult> Login(LoginViewModel model)
         {
-            Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: true, lockoutOnFailure: false);
+            Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, isPersistent: true, lockoutOnFailure: false);
             if (result.Succeeded)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
             else
             {
