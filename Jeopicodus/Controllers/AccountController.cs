@@ -63,11 +63,11 @@ namespace Jeopicodus.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult> LogOff()
+        [HttpGet]
+        public async Task<ActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index","Home");
         }
     }
 }

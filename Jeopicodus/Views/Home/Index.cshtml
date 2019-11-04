@@ -2,4 +2,7 @@
 
 @model LoginViewModel
 
-<h1>Hello World!</h1>
+<h1>Hello @User.Identity.Name!</h1>
+
+@Html.ActionLink("New Game", "Index", "Game")
+@Html.ActionLink("Join Game", "Details", "Game")

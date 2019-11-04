@@ -4,6 +4,7 @@ namespace Jeopicodus.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public string Team { get; set; }
+        public int GameId { get; set; }
+        public string TeamName { get; set; }
     }
 }
