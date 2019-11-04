@@ -18,6 +18,11 @@ namespace Jeopicodus.Controllers
             }
         }
 
+        public ActionResult Details()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
