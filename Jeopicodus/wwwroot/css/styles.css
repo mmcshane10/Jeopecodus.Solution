@@ -60,3 +60,11 @@ h1, h2
 {
     background-color:  rgb(252, 255, 88);
 }
+
+.modal-footer {
+    justify-content: center;
+}
+
+#modal-btn {
+    width: 100%;
+}
