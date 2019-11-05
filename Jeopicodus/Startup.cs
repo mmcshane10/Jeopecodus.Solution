@@ -38,7 +38,7 @@ namespace Jeopicodus
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
-                services.AddEntityFrameworkSqlServer()
+                services
                 .AddDbContext<JeopicodusContext>(options => options
                 .UseSqlServer(Configuration.GetConnectionString("MyDbConnection")));
             else{
@@ -46,6 +46,7 @@ namespace Jeopicodus
                 .AddDbContext<JeopicodusContext>(options => options
                 .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
             }
+                services.AddEntityFrameworkSqlServer();
 
             services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
 
