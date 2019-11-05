@@ -45,22 +45,22 @@ namespace Jeopicodus
             Console.WriteLine("ERROR RIGHT HERE");
             services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<JeopicodusContext>()
-                .AddDefaultTokenProviders();
-            Console.WriteLine("ERROR HERE");
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 0;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequiredUniqueChars = 0;
-            });
+            // services.AddIdentity<ApplicationUser, IdentityRole>()
+            //     .AddEntityFrameworkStores<JeopicodusContext>()
+            //     .AddDefaultTokenProviders();
+            // Console.WriteLine("ERROR HERE");
+            // services.Configure<IdentityOptions>(options =>
+            // {
+            //     options.Password.RequireDigit = false;
+            //     options.Password.RequiredLength = 0;
+            //     options.Password.RequireLowercase = false;
+            //     options.Password.RequireNonAlphanumeric = false;
+            //     options.Password.RequireUppercase = false;
+            //     options.Password.RequiredUniqueChars = 0;
+            // });
 
 
-            services.AddSignalR();
+            // services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
