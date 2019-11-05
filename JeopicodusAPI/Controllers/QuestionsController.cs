@@ -7,11 +7,11 @@ namespace JeopicodusAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FillInTheBlankontroller : ControllerBase
+    public class FillInTheBlankController : ControllerBase
     {
         private JeopicodusAPIContext _db;
 
-        public FillInTheBlankontroller(JeopicodusAPIContext db)
+        public FillInTheBlankController(JeopicodusAPIContext db)
         {
             _db = db;
         }
@@ -27,7 +27,7 @@ namespace JeopicodusAPI.Controllers
         [HttpGet("{id}")]
         public ActionResult<FillInTheBlank> Get(int id)
         {
-            return _db.FillInTheBlank.FirstOrDefault(entry => entry.FillInTheBlankId == id);
+            return _db.FillInTheBlank.FirstOrDefault(entry => entry.Id == id);
         }
     }
 }

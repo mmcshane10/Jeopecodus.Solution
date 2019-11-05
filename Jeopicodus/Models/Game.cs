@@ -39,6 +39,7 @@ namespace Jeopicodus.Models
             var result = apiCallTask.Result;
 
             JArray jsonResponse = JsonConvert.DeserializeObject<JArray>(result);
+            System.Console.WriteLine(jsonResponse);
             List<FillInTheBlank> questions = JsonConvert.DeserializeObject<List<FillInTheBlank>>(result);
             return questions;
         }

@@ -2,7 +2,7 @@ namespace JeopicodusAPI.Models
 {
     public class MultipleChoice
     {
-    public int MultipleChoiceId { get; set; }
+    public int Id { get; set; }
     public string Category { get; set; }
     public string Difficulty { get; set; }
     public string Prompt { get; set; }

@@ -1,7 +1,8 @@
-@model string
+@using Jeopicodus.ViewModels
+@model QuestionCardViewModel
 
-<div class="card" >
+<div id="@Model.QuestionId" class="card" >
   <div class="card-body">
-    <h4>@Model</h4>
+    <h4>@Model.Value.ToString()</h4>
   </div>
 </div>

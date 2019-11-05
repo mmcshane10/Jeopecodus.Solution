@@ -1,44 +1,62 @@
+@using Jeopicodus.ViewModels
+@using Jeopicodus.Models
+@model GameDetailsViewModel
+
 <div class="jumbotron">
     <img src="~/img/logo.png">
 </div>
 
 <div class="container">
     <div id="gameboard">
-        <div class="row">
-            <div class="col-sm">
-                @await Html.PartialAsync("_QuestionCard", "Cat 1")
+        <div id="catagories" class="row">
+            <div class="col-sm cat-1">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[0], QuestionId = 0 })
             </div>
-            <div class="col-sm">
-                @await Html.PartialAsync("_QuestionCard", "Cat 2")
+            <div class="col-sm cat-2">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[1], QuestionId = 0 })
             </div>
-            <div class="col-sm">
-                @await Html.PartialAsync("_QuestionCard", "Cat 3")
+            <div class="col-sm cat-3">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[2], QuestionId = 0 })
             </div>
-            <div class="col-sm">
-                @await Html.PartialAsync("_QuestionCard", "Cat 4")
+            <div class="col-sm cat-4">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[3], QuestionId = 0 })
             </div>
-            <div class="col-sm">
-                @await Html.PartialAsync("_QuestionCard", "Cat 5")
+            <div class="col-sm cat-5">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[4], QuestionId = 0 })
             </div>
         </div>
         <hr class="game-bar">
         @for(int i = 1; i <=5; i++)
         {
-            <div class="row">
-                <div class="col-sm">
-                    @await Html.PartialAsync("_QuestionCard", (i*100).ToString())
+            var difficulty = "Easy";
+            if(i > 2 && i < 5)
+            {
+                difficulty = "Medium";
+            }
+            else if (i == 5){
+                difficulty = "Hard";
+            }
+            Question q1 = @Model.Questions[@Model.Categories[0] + "_" + @difficulty][0];
+            Question q2 = @Model.Questions[@Model.Categories[1] + "_" + @difficulty][0];
+            Question q3 = @Model.Questions[@Model.Categories[2] + "_" + @difficulty][0];
+            Question q4 = @Model.Questions[@Model.Categories[3] + "_" + @difficulty][0];
+            Question q5 = @Model.Questions[@Model.Categories[4] + "_" + @difficulty][0];
+
+            <div id="level-@i" class="row">
+                <div class="col-sm cat-q-1">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q1.Id })
                 </div>
-                <div class="col-sm">
-                    @await Html.PartialAsync("_QuestionCard", (i*100).ToString())
+                <div class="col-sm cat-q-2">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q2.Id })
                 </div>
-                <div class="col-sm">
-                    @await Html.PartialAsync("_QuestionCard", (i*100).ToString())
+                <div class="col-sm cat-q-3">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q3.Id })
                 </div>
-                <div class="col-sm">
-                    @await Html.PartialAsync("_QuestionCard", (i*100).ToString())
+                <div class="col-sm cat-q-4">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q4.Id })
                 </div>
-                <div class="col-sm">
-                    @await Html.PartialAsync("_QuestionCard", (i*100).ToString())
+                <div class="col-sm cat-q-5">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q5.Id })
                 </div>
             </div>
         }
