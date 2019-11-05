@@ -32,18 +32,18 @@ namespace Jeopicodus
         public void ConfigureServices(IServiceCollection services)
         {
 
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
-                services
-                .AddDbContext<JeopicodusContext>(options => options
-                .UseSqlServer(Configuration.GetConnectionString("MyDbConnection")));
-            else{
-            services.AddEntityFrameworkMySql()
-                .AddDbContext<JeopicodusContext>(options => options
-                .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
-            }
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            Console.WriteLine("ERROR RIGHT HERE");
-            services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
+            // if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+            //     services
+            //     .AddDbContext<JeopicodusContext>(options => options
+            //     .UseSqlServer(Configuration.GetConnectionString("MyDbConnection")));
+            // else{
+            // services.AddEntityFrameworkMySql()
+            //     .AddDbContext<JeopicodusContext>(options => options
+            //     .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
+            // }
+            // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            // Console.WriteLine("ERROR RIGHT HERE");
+            // services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
 
             // services.AddIdentity<ApplicationUser, IdentityRole>()
             //     .AddEntityFrameworkStores<JeopicodusContext>()
