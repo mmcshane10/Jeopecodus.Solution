@@ -74,7 +74,7 @@
                 <div class="modal-body">
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" aria-hidden="true">
+                    <button class="btn btn-default" aria-hidden="true" data-dismiss="modal">
                         Answer
                     </button>
                 </div>
@@ -101,10 +101,11 @@
         });
 
         function getQuestion(id){
-            @*var questionList = '@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Game.Questions) as string)';*@
-            var questionList = '@Game.Questions';
+            var questionList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Game.Questions) as string);
+            
             for(let i = 0; i < questionList.length; i++){
-                if(questionList[i].Id === id){
+                console.log(questionList[i]);
+                if(questionList[i].Id == id){
                     return questionList[i].Prompt;
                 }
             }
