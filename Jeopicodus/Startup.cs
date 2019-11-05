@@ -76,7 +76,7 @@ namespace Jeopicodus
             }
 
             // app.UseHttpsRedirection();
-            //app.UseStaticFiles();
+            app.UseStaticFiles();
             app.UseCookiePolicy();
 
             app.UseAuthentication();
