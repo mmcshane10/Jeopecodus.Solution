@@ -31,12 +31,7 @@ namespace Jeopicodus
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
                 services
                 .AddDbContext<JeopicodusContext>(options => options
@@ -45,8 +40,8 @@ namespace Jeopicodus
             services.AddEntityFrameworkMySql()
                 .AddDbContext<JeopicodusContext>(options => options
                 .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             }
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             Console.WriteLine("ERROR RIGHT HERE");
             services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
 
