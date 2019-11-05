@@ -20,7 +20,7 @@
             <div class="row">
                 <div class="col-sm">
                     <div class="card-body team-one">
-                        <h5 class="card-title">@game.TeamName1</h5>
+                        <h5 class="card-title">@game.Teams[0].TeamName</h5>
                         <hr>
                         <div class="team-one-members">
                         </div>
@@ -29,9 +29,9 @@
                 </div>
                 <div class="col-sm">
                     <div class="card-body team-two">
-                        @if (string.IsNullOrEmpty(game.TeamName2))
+                        @if (string.IsNullOrEmpty(@game.Teams[1].TeamName))
                         {
-                            <h5 class="card-title">@game.TeamName2</h5>
+                            <h5 class="card-title">@game.Teams[1].TeamName</h5>
                             <hr>
                             <div class="team-two-members">
                             </div>

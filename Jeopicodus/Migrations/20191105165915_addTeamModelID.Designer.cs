@@ -3,14 +3,16 @@ using System;
 using Jeopicodus.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Jeopicodus.Solution.Migrations
 {
     [DbContext(typeof(JeopicodusContext))]
-    partial class JeopicodusContextModelSnapshot : ModelSnapshot
+    [Migration("20191105165915_addTeamModelID")]
+    partial class addTeamModelID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

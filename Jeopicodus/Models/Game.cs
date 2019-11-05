@@ -16,7 +16,7 @@ namespace Jeopicodus.Models
         public DateTime TimeStarted { get; set; }
         public string TimeRemaining { get; set; }
         public string WinningTeam { get; set; }
-        public IEnumerable<Team> Teams { get; set; }
+        public List<Team> Teams { get; set; }
         
         public Game()
         {
