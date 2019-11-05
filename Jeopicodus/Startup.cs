@@ -46,14 +46,13 @@ namespace Jeopicodus
                 .AddDbContext<JeopicodusContext>(options => options
                 .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
             }
-                services.AddEntityFrameworkSqlServer();
-
+            Console.WriteLine("ERROR RIGHT HERE");
             services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<JeopicodusContext>()
                 .AddDefaultTokenProviders();
-
+            Console.WriteLine("ERROR HERE");
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = false;
