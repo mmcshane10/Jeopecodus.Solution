@@ -10,16 +10,14 @@ namespace Jeopicodus.Models
     public class Game
     {
         public int GameId { get; set; }
-        public string TeamName1 { get; set; }
-        public string TeamName2 { get; set; }
         public int ScoreTeam1 { get; set; }
         public int ScoreTeam2 { get; set; }
         public string Status { get; set; }
         public DateTime TimeStarted { get; set; }
         public string TimeRemaining { get; set; }
         public string WinningTeam { get; set; }
-        public virtual IEnumerable<ApplicationUser> Users {get; set; }
-
+        public IEnumerable<Team> Teams { get; set; }
+        
         public Game()
         {
             ScoreTeam1 = 0;
@@ -31,7 +29,7 @@ namespace Jeopicodus.Models
         {
             List<Question> questions = new List<Question>();
             questions.AddRange(GetFillInTheBlanks());
-            questions.AddRange(GetMultiChoice());
+            // questions.AddRange(GetMultiChoice());
             return questions;
         }
 

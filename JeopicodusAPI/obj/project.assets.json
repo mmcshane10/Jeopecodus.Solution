@@ -12445,11 +12445,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/Guest/Desktop/Jepicodus.Solution/JeopicodusAPI/JeopicodusAPI.csproj",
+      "projectUniqueName": "/Users/Guest/Desktop/Jeopecodus.Solution/JeopicodusAPI/JeopicodusAPI.csproj",
       "projectName": "JeopicodusAPI",
-      "projectPath": "/Users/Guest/Desktop/Jepicodus.Solution/JeopicodusAPI/JeopicodusAPI.csproj",
+      "projectPath": "/Users/Guest/Desktop/Jeopecodus.Solution/JeopicodusAPI/JeopicodusAPI.csproj",
       "packagesPath": "/Users/Guest/.nuget/packages/",
-      "outputPath": "/Users/Guest/Desktop/Jepicodus.Solution/JeopicodusAPI/obj/",
+      "outputPath": "/Users/Guest/Desktop/Jeopecodus.Solution/JeopicodusAPI/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"

@@ -17,7 +17,7 @@ namespace JeopicodusAPI.Models
 
             builder.Entity<MultipleChoice>()
                 .HasData(
-                    new MultipleChoice { MultipleChoiceId = 0, Category = "", Difficulty = "", Prompt = "", Answer = "", Wrong1 = "", Wrong2 = "", Wrong3 = ""},
+                    new MultipleChoice { MultipleChoiceId = 0, Category = "", Difficulty = "", Prompt = "", Answer = "", Wrong1 = "", Wrong2 = "", Wrong3 = "" },
 
                     new MultipleChoice { MultipleChoiceId = 1, Category = "C#", Difficulty = "Hard", Prompt = "Dotnet script is a REPL tool. What does REPL stand for?", Answer = "read-evaluate-print-loop", Wrong1 = "refactor-exchange-print-loop", Wrong2 = "refactor-evaluate-print-locate", Wrong3 = "read-exchange-print-locate" },
 
@@ -159,7 +159,17 @@ namespace JeopicodusAPI.Models
 
                     new FillInTheBlank { FillInTheBlankId = 60, Category = "C#", Difficulty = "Medium", Prompt = "In the MVC framework, a _________ acts as the bridge between the data and the user interface.", Answer = "controller" },
 
-                    new FillInTheBlank { FillInTheBlankId = 61, Category = "C#", Difficulty = "Medium", Prompt = "The _________ templating engine allows us to add C# logic to our views using models we created.", Answer = "razor" }
+                    new FillInTheBlank { FillInTheBlankId = 61, Category = "C#", Difficulty = "Medium", Prompt = "The _________ templating engine allows us to add C# logic to our views using models we created.", Answer = "razor" },
+
+                    new FillInTheBlank { FillInTheBlankId = 62, Category = "Git", Difficulty = "Easy", Prompt = "Git is a distributed _________ system for tracking changes in source code during software development", Answer = "version control" },
+
+                    new FillInTheBlank { FillInTheBlankId = 63, Category = "Git", Difficulty = "Easy", Prompt = "A _________ in Git is a way of saving changes to the permanent history of our project.", Answer = "commit" },
+
+                    new FillInTheBlank { FillInTheBlankId = 64, Category = "Git", Difficulty = "Medium", Prompt = "This command in Git shows the names and URLs for all of the repositories that the project's Git repository has stored.", Answer = "git remote -v" },
+
+                    new FillInTheBlank { FillInTheBlankId = 65, Category = "Git", Difficulty = "Medium", Prompt = "To modify the most recent commit message or add an additional file to the most recent commit, we can use the command 'git commit --_________.", Answer = "amend" },
+
+                    new FillInTheBlank { FillInTheBlankId = 66, Category = "Git", Difficulty = "Hard", Prompt = "The command 'git _________ <new_branch>' will create and switch to a new branch in Git.", Answer = "checkout -b" }
             );
         }
     }
