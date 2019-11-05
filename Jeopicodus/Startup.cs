@@ -45,6 +45,7 @@ namespace Jeopicodus
             services.AddEntityFrameworkMySql()
                 .AddDbContext<JeopicodusContext>(options => options
                 .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             }
             Console.WriteLine("ERROR RIGHT HERE");
             services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
@@ -63,7 +64,6 @@ namespace Jeopicodus
                 options.Password.RequiredUniqueChars = 0;
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSignalR();
         }
