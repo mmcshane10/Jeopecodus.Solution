@@ -17,6 +17,7 @@ namespace Jeopicodus.Models
         public string TimeRemaining { get; set; }
         public string WinningTeam { get; set; }
         public List<Team> Teams { get; set; }
+        public static List<Question> Questions = MakeQuestions();
         
         public Game()
         {
@@ -25,7 +26,7 @@ namespace Jeopicodus.Models
             Status = GameStatus.ACCEPTING_PLAYERS;
         }
 
-        public static List<Question> Questions()
+        public static List<Question> MakeQuestions()
         {
             List<Question> questions = new List<Question>();
             questions.AddRange(GetFillInTheBlanks());

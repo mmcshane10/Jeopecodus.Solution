@@ -62,3 +62,54 @@
         }
     </div>
 </div>
+<div class="modalCards">
+    <div id="questionModal" class="modal" data-easein="whirlIn"  tabindex="-1" role="dialog" aria-labelledby="costumModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Question
+                    </h4>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" aria-hidden="true">
+                        Answer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.ui.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".col-sm").click(function(event){
+            var questionId = event.target.closest(".card").id;
+            var question = getQuestion(questionId);
+            $(".modal-body").text(question);
+            $(".modal").modal('show');
+
+        });
+        $(".modal").each(function(l){
+            $(this).on("show.bs.modal", function(l){
+                var o=$(this).attr("data-easein");
+                $(".modal-dialog").velocity("transition."+o)
+            })
+        });
+
+        function getQuestion(id){
+            @*var questionList = '@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Game.Questions) as string)';*@
+            var questionList = '@Game.Questions';
+            for(let i = 0; i < questionList.length; i++){
+                if(questionList[i].Id === id){
+                    return questionList[i].Prompt;
+                }
+            }
+            return "Question Not Found";
+        }
+    });
+    
+</script>

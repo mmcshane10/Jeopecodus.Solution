@@ -45,7 +45,7 @@ namespace Jeopicodus.Controllers
             var currentUser = await _userManager.FindByIdAsync(userId);
             string teamName = currentUser.TeamName;
 
-            List<Question> questionList = Game.Questions();
+            List<Question> questionList = Game.Questions;
             Dictionary<string,List<Question>> questions = new Dictionary<string, List<Question>>();
             foreach(Question q in questionList)
             {
