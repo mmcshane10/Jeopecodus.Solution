@@ -1,8 +1,9 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using Jeopicodus.ViewModels
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@model LoginViewModel
+
+<h1>Hello @User.Identity.Name!</h1>
+
+@Html.ActionLink("Game", "Index", "Game")
+@Html.ActionLink("User History", "Details", "Account")
+@Html.ActionLink("Rules", "Details", "Home")

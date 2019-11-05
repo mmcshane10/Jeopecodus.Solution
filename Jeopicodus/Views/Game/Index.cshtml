@@ -1,0 +1,53 @@
+@using System.Collections.Generic
+@using Jeopicodus.Models
+@model List<Game>
+
+<h1>Games</h1>
+
+<div class="flex-container">
+    <div class="card">
+        <form id="team-one-name" method="post">
+            <div class="form-control">
+                <input id="team1name" name="team1name" type="text" placeholder="Team Name">
+            </div>
+            <button type="submit" class="btn btn-primary">Create Team</button>
+        </form>
+    </div>
+
+    @foreach(Game game in Model)
+    {
+        <div class="card">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="card-body team-one">
+                        <h5 class="card-title">@game.TeamName1</h5>
+                        <hr>
+                        <div class="team-one-members">
+                        </div>
+                    <button class="btn btn-primary">Join Team</button>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="card-body team-two">
+                        @if (string.IsNullOrEmpty(game.TeamName2))
+                        {
+                            <h5 class="card-title">@game.TeamName2</h5>
+                            <hr>
+                            <div class="team-two-members">
+                            </div>
+                            <button class="btn btn-primary">Join Team</button>
+                        }
+                        else
+                        {
+                            <form id="team-two-name" method="post">
+                                <label for="team2name">Team Name:</label>
+                                <input id="team2name" name="team2name" type="text">
+                                <button type="submit" class="btn btn-primary">Add Team</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
