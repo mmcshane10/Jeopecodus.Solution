@@ -61,10 +61,18 @@ h1, h2
     background-color:  rgb(252, 255, 88);
 }
 
+.modal-content {
+    background-color: #0709CE;
+    color: white;
+}
+
 .modal-footer {
     justify-content: center;
 }
 
 #modal-btn {
     width: 100%;
+    color: rgb(63, 63, 63);
+    background-color: rgb(252, 255, 88);
+    font-weight: bold;
 }
