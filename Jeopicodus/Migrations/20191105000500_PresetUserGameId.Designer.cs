@@ -3,14 +3,16 @@ using System;
 using Jeopicodus.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Jeopicodus.Solution.Migrations
 {
     [DbContext(typeof(JeopicodusContext))]
-    partial class JeopicodusContextModelSnapshot : ModelSnapshot
+    [Migration("20191105000500_PresetUserGameId")]
+    partial class PresetUserGameId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,9 +34,7 @@ namespace Jeopicodus.Solution.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
-                    b.Property<int?>("GameId");
-
-                    b.Property<int>("GameReference");
+                    b.Property<int>("GameId");
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -212,7 +212,8 @@ namespace Jeopicodus.Solution.Migrations
                 {
                     b.HasOne("Jeopicodus.Models.Game")
                         .WithMany("Users")
-                        .HasForeignKey("GameId");
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
