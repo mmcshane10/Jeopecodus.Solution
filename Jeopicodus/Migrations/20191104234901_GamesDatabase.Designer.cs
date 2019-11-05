@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jeopicodus.Solution.Migrations
 {
     [DbContext(typeof(JeopicodusContext))]
-    [Migration("20191104195925_Initial")]
-    partial class Initial
+    [Migration("20191104234901_GamesDatabase")]
+    partial class GamesDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,8 @@ namespace Jeopicodus.Solution.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
+                    b.Property<int>("GameId");
+
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
@@ -52,7 +54,7 @@ namespace Jeopicodus.Solution.Migrations
 
                     b.Property<string>("SecurityStamp");
 
-                    b.Property<string>("Team");
+                    b.Property<string>("TeamName");
 
                     b.Property<bool>("TwoFactorEnabled");
 
@@ -60,6 +62,8 @@ namespace Jeopicodus.Solution.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GameId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -69,6 +73,32 @@ namespace Jeopicodus.Solution.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("Jeopicodus.Models.Game", b =>
+                {
+                    b.Property<int>("GameId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ScoreTeam1");
+
+                    b.Property<int>("ScoreTeam2");
+
+                    b.Property<string>("Status");
+
+                    b.Property<string>("TeamName1");
+
+                    b.Property<string>("TeamName2");
+
+                    b.Property<string>("TimeRemaining");
+
+                    b.Property<DateTime>("TimeStarted");
+
+                    b.Property<string>("WinningTeam");
+
+                    b.HasKey("GameId");
+
+                    b.ToTable("Games");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -176,6 +206,14 @@ namespace Jeopicodus.Solution.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Jeopicodus.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("Jeopicodus.Models.Game")
+                        .WithMany("Users")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

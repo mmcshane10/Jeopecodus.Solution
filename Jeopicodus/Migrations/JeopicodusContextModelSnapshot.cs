@@ -61,6 +61,8 @@ namespace Jeopicodus.Solution.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GameId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -69,6 +71,32 @@ namespace Jeopicodus.Solution.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("Jeopicodus.Models.Game", b =>
+                {
+                    b.Property<int>("GameId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ScoreTeam1");
+
+                    b.Property<int>("ScoreTeam2");
+
+                    b.Property<string>("Status");
+
+                    b.Property<string>("TeamName1");
+
+                    b.Property<string>("TeamName2");
+
+                    b.Property<string>("TimeRemaining");
+
+                    b.Property<DateTime>("TimeStarted");
+
+                    b.Property<string>("WinningTeam");
+
+                    b.HasKey("GameId");
+
+                    b.ToTable("Games");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -176,6 +204,14 @@ namespace Jeopicodus.Solution.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Jeopicodus.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("Jeopicodus.Models.Game")
+                        .WithMany("Users")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

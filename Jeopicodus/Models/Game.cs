@@ -18,32 +18,40 @@ namespace Jeopicodus.Models
         public DateTime TimeStarted { get; set; }
         public string TimeRemaining { get; set; }
         public string WinningTeam { get; set; }
-
         public virtual IEnumerable<ApplicationUser> Users {get; set; }
+
+        public Game()
+        {
+            ScoreTeam1 = 0;
+            ScoreTeam2 = 0;
+            Status = GameStatus.ACCEPTING_PLAYERS;
+        }
+
         public static List<Question> Questions()
         {
-            List<Question> questions = GetFillInTheBlanks();
+            List<Question> questions = new List<Question>();
+            questions.AddRange(GetFillInTheBlanks());
             questions.AddRange(GetMultiChoice());
             return questions;
         }
 
-        public static List<Question> GetFillInTheBlanks()
+        public static List<FillInTheBlank> GetFillInTheBlanks()
         {
             var apiCallTask = ApiHelper.ApiCall("FillInTheBlank");
             var result = apiCallTask.Result;
 
             JArray jsonResponse = JsonConvert.DeserializeObject<JArray>(result);
-            List<Question> questions = JsonConvert.DeserializeObject<List<Question>>(result);
+            List<FillInTheBlank> questions = JsonConvert.DeserializeObject<List<FillInTheBlank>>(result);
             return questions;
         }
 
-        public static List<Question> GetMultiChoice()
+        public static List<MultipleChoice> GetMultiChoice()
         {
             var apiCallTask = ApiHelper.ApiCall("MultipleChoice");
             var result = apiCallTask.Result;
 
             JArray jsonResponse = JsonConvert.DeserializeObject<JArray>(result);
-            List<Question> questions = JsonConvert.DeserializeObject<List<Question>>(result);
+            List<MultipleChoice> questions = JsonConvert.DeserializeObject<List<MultipleChoice>>(result);
             return questions;
         }
     }
