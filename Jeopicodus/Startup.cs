@@ -37,10 +37,17 @@ namespace Jeopicodus
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+                services.AddEntityFrameworkSqlServer()
+                .AddDbContext<JeopicodusContext>(options => options
+                .UseSqlServer(Configuration.GetConnectionString("MyDbConnection")));
+            else{
             services.AddEntityFrameworkMySql()
                 .AddDbContext<JeopicodusContext>(options => options
                 .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
+            }
+
+            services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<JeopicodusContext>()
