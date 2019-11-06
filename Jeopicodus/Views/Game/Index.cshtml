@@ -7,12 +7,14 @@
 
 <div class="flex-container">
     <div class="card">
-        <form id="team-one-name" method="post">
-            <div class="form-control">
-                <input id="team1name" name="team1name" type="text" placeholder="Team Name">
-            </div>
-            <button type="submit" class="btn btn-primary">Create Team</button>
-        </form>
+        <div class="card-body">
+            <form id="team-one-name" method="post">
+                <div class="form-control">
+                    <input id="team1name" name="team1name" type="text" placeholder="Team Name">
+                </div>
+                <button type="submit" class="btn btn-primary">Create Team</button>
+            </form>
+        </div>
     </div>
 
     @foreach(Game game in Model.Games)
