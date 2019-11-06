@@ -1,46 +1,117 @@
+@using Jeopicodus.ViewModels
+@using Jeopicodus.Models
+@model GameDetailsViewModel
+
 <div class="jumbotron">
     <img src="~/img/logo.png">
 </div>
 
 <div class="container">
     <div id="gameboard">
-        <div class="row">
-            <div class="col-sm">
-                @await Html.PartialAsync("_QuestionCard", "Cat 1")
+        <div id="catagories" class="row">
+            <div class="col-sm cat-1">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[0], QuestionId = 0 })
             </div>
-            <div class="col-sm">
-                @await Html.PartialAsync("_QuestionCard", "Cat 2")
+            <div class="col-sm cat-2">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[1], QuestionId = 0 })
             </div>
-            <div class="col-sm">
-                @await Html.PartialAsync("_QuestionCard", "Cat 3")
+            <div class="col-sm cat-3">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[2], QuestionId = 0 })
             </div>
-            <div class="col-sm">
-                @await Html.PartialAsync("_QuestionCard", "Cat 4")
+            <div class="col-sm cat-4">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[3], QuestionId = 0 })
             </div>
-            <div class="col-sm">
-                @await Html.PartialAsync("_QuestionCard", "Cat 5")
+            <div class="col-sm cat-5">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[4], QuestionId = 0 })
             </div>
         </div>
         <hr class="game-bar">
         @for(int i = 1; i <=5; i++)
         {
-            <div class="row">
-                <div class="col-sm">
-                    @await Html.PartialAsync("_QuestionCard", (i*100).ToString())
+            var difficulty = "Easy";
+            if(i > 2 && i < 5)
+            {
+                difficulty = "Medium";
+            }
+            else if (i == 5){
+                difficulty = "Hard";
+            }
+            Question q1 = @Model.Questions[@Model.Categories[0] + "_" + @difficulty][0];
+            Question q2 = @Model.Questions[@Model.Categories[1] + "_" + @difficulty][0];
+            Question q3 = @Model.Questions[@Model.Categories[2] + "_" + @difficulty][0];
+            Question q4 = @Model.Questions[@Model.Categories[3] + "_" + @difficulty][0];
+            Question q5 = @Model.Questions[@Model.Categories[4] + "_" + @difficulty][0];
+
+            <div id="level-@i" class="row">
+                <div class="col-sm cat-q-1">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q1.Id })
                 </div>
-                <div class="col-sm">
-                    @await Html.PartialAsync("_QuestionCard", (i*100).ToString())
+                <div class="col-sm cat-q-2">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q2.Id })
                 </div>
-                <div class="col-sm">
-                    @await Html.PartialAsync("_QuestionCard", (i*100).ToString())
+                <div class="col-sm cat-q-3">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q3.Id })
                 </div>
-                <div class="col-sm">
-                    @await Html.PartialAsync("_QuestionCard", (i*100).ToString())
+                <div class="col-sm cat-q-4">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q4.Id })
                 </div>
-                <div class="col-sm">
-                    @await Html.PartialAsync("_QuestionCard", (i*100).ToString())
+                <div class="col-sm cat-q-5">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q5.Id })
                 </div>
             </div>
         }
+        <div class="modalCards">
+            <div id="questionModal" class="modal" data-easein="whirlIn"  tabindex="-1" role="dialog" aria-labelledby="questionModal" aria-hidden="true">
+                <div class="modal-dialog h-100 d-flex flex-column justify-content-center my-0" >
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">
+                                Question
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                            <button id="modal-btn" class="btn btn-default" aria-hidden="true" data-dismiss="modal">
+                                Answer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.ui.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".col-sm").click(function(event){
+            if($(this).attr('class').indexOf('cat-q') !== -1) {
+                var questionId = event.target.closest(".card").id;
+                var question = getQuestion(questionId);
+                $(".modal-body").text(question);
+                $(".modal").modal('show');
+            }
+        });
+        $(".modal").each(function(l){
+            $(this).on("show.bs.modal", function(l){
+                var o=$(this).attr("data-easein");
+                $(".modal-dialog").velocity("transition."+o)
+            })
+        });
+
+        function getQuestion(id){
+            var questionList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Game.Questions) as string);
+            
+            for(let i = 0; i < questionList.length; i++){
+                console.log(questionList[i]);
+                if(questionList[i].Id == id){
+                    return questionList[i].Prompt;
+                }
+            }
+            return "Question Not Found";
+        }
+    });
+    
+</script>

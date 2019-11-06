@@ -7,6 +7,8 @@ namespace Jeopicodus.Models
     {
         public JeopicodusContext(DbContextOptions options) : base(options) { }
         public DbSet<Game> Games { get; set; }
+        public DbSet<Team> Teams { get; set; }
+        public DbSet<TeamMember> TeamMembers { get; set; }
     }
 
 }

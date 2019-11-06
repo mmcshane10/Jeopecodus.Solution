@@ -1,47 +1,50 @@
 @using System.Collections.Generic
+@using Jeopicodus.ViewModels
 @using Jeopicodus.Models
-@model List<Game>
+@model GameIndexViewModel
 
 <h1>Games</h1>
 
 <div class="flex-container">
     <div class="card">
-        <form id="team-one-name" method="post">
-            <div class="form-control">
-                <input id="team1name" name="team1name" type="text" placeholder="Team Name">
-            </div>
-            <button type="submit" class="btn btn-primary">Create Team</button>
-        </form>
+        <div class="card-body">
+            <form id="team-one-name" method="post">
+                <div class="form-control">
+                    <input id="team1name" name="team1name" type="text" placeholder="Team Name">
+                </div>
+                <button type="submit" class="btn btn-primary">Create Team</button>
+            </form>
+        </div>
     </div>
 
-    @foreach(Game game in Model)
+    @foreach(Game game in Model.Games)
     {
-        <div class="card">
+        <div id="gameId-@game.GameId" class="card">
             <div class="row">
                 <div class="col-sm">
                     <div class="card-body team-one">
                         <h5 class="card-title">@game.Teams[0].TeamName</h5>
                         <hr>
-                        <div class="team-one-members">
+                        <div id="team-@game.Teams[0].TeamId" class="members team-one-members">
                         </div>
-                    <button class="btn btn-primary">Join Team</button>
+                        <button class="join-team btn btn-primary">Join Team</button>
                     </div>
                 </div>
                 <div class="col-sm">
                     <div class="card-body team-two">
-                        @if (string.IsNullOrEmpty(@game.Teams[1].TeamName))
+                        @if (@game.Teams.Count > 1)
                         {
                             <h5 class="card-title">@game.Teams[1].TeamName</h5>
                             <hr>
-                            <div class="team-two-members">
+                            <div id="team-@game.Teams[1].TeamId" class="members team-two-members">
                             </div>
-                            <button class="btn btn-primary">Join Team</button>
+                            <button class="join-team btn btn-primary">Join Team</button>
                         }
                         else
                         {
-                            <form id="team-two-name" method="post">
-                                <label for="team2name">Team Name:</label>
-                                <input id="team2name" name="team2name" type="text">
+                            <form class="team-two-name" method="post">
+                                <label for="team2name-@game.GameId">Team Name:</label>
+                                <input id="team2name-@game.GameId" name="team2name" type="text">
                                 <button type="submit" class="btn btn-primary">Add Team</button>
                             </form>
                         }
@@ -51,3 +54,41 @@
         </div>
     }
 </div>
+
+<script type="text/javascript">
+    const hubConnection = new signalR.HubConnectionBuilder()
+                    .withUrl("/gameHub")
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build();
+    var playerId = '@Model.User.Id';
+    hubConnection.start();
+    $(document).ready(function(){
+        $('.team-one .join-team').click(function(){
+            getTeamData(this);
+        });
+        $('.team-two .join-team').click(function(){
+            getTeamData(this);
+        });
+        $('.team-two-name').submit(function(event){
+            event.preventDefault();
+            const gameIdString = $(this).closest(".card").attr("id");
+            const gameId = gameIdString.substring(gameIdString.indexOf("-")+1);
+            const team2Name = $('#team2name-' + gameId).val();
+            hubConnection.invoke('CreateTeam', gameId + "#" + team2Name + "#" + playerId);
+        });
+        $('#team-one-name').submit(function(event){
+            event.preventDefault();
+            const team1Name = $('#team1name').val();
+            hubConnection.invoke('CreateGame', team1Name + "#" + playerId);
+        });
+
+        function getTeamData(element) {
+            const gameIdString = $(element).closest(".card").attr("id");
+            const gameId = gameIdString.substring(gameIdString.indexOf("-")+1);
+            const teamIdString = $(element).closest(".card-body").find(".members").attr("id");
+            const teamId = teamIdString.substring(teamIdString.indexOf("-")+1);
+            hubConnection.invoke('JoinTeam', gameId + "#" + teamId + "#" + playerId);
+        }
+
+    });
+</script>

@@ -3,14 +3,16 @@ using System;
 using Jeopicodus.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Jeopicodus.Solution.Migrations
 {
     [DbContext(typeof(JeopicodusContext))]
-    partial class JeopicodusContextModelSnapshot : ModelSnapshot
+    [Migration("20191105232533_UpdateTeamMemberProp")]
+    partial class UpdateTeamMemberProp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,7 +106,7 @@ namespace Jeopicodus.Solution.Migrations
                     b.Property<int>("TeamId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("GameId");
+                    b.Property<int?>("GameId");
 
                     b.Property<bool>("IsTurn");
 
@@ -114,7 +116,7 @@ namespace Jeopicodus.Solution.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("Teams");
+                    b.ToTable("Team");
                 });
 
             modelBuilder.Entity("Jeopicodus.Models.TeamMember", b =>
@@ -249,8 +251,7 @@ namespace Jeopicodus.Solution.Migrations
                 {
                     b.HasOne("Jeopicodus.Models.Game")
                         .WithMany("Teams")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GameId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
