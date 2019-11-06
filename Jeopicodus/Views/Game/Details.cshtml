@@ -8,6 +8,21 @@
 </div>
 
 <div class="container">
+    <div id="scoreboard" class="row">
+        @{
+            List<Team> TeamList = new List<Team>{};
+        }
+        @foreach(Team team in Model.Game.Teams)
+        {
+            TeamList.Add(team);
+        }
+        <div class="col-sm" id="team1-scoreboard">
+            <h5>@TeamList[0].TeamName<span class="scoreboard-score">@Model.Game.ScoreTeam1</span></h5>
+        </div>
+        <div class="col-sm" id="team2-scoreboard">
+            <h5><span class="scoreboard-score">@Model.Game.ScoreTeam2</span>@TeamList[1].TeamName</h5>
+        </div>
+    </div>
     <div id="gameboard">
         <div id="catagories" class="row">
             <div class="col-sm cat-1">
@@ -132,6 +147,23 @@
             }
             return "Question Not Found";
         }
+
+        foreach(Team team in @Model.Game.Teams)
+        let opponent;
+        {
+            if (team.TeamName != @Model.UserTeam)
+            {
+                opponent = team.TeamName;
+                $("#scoreboard-other-team").append();
+                break;
+            }
+            else
+            {
+                continue;
+            }
+
+        }
+        console.log(opponent);
     });
     
 </script>
