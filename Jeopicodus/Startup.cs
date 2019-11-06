@@ -18,12 +18,9 @@ namespace Jeopicodus
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-            .SetBasePath(env.ContentRootPath)
-            .AddJsonFile("appsettings.json");
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; set; }
@@ -31,12 +28,7 @@ namespace Jeopicodus
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
                 services.AddEntityFrameworkSqlServer()
                 .AddDbContext<JeopicodusContext>(options => options
@@ -46,13 +38,14 @@ namespace Jeopicodus
                 .AddDbContext<JeopicodusContext>(options => options
                 .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
             }
-
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            Console.WriteLine("ERROR RIGHT HERE");
             services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<JeopicodusContext>()
                 .AddDefaultTokenProviders();
-
+            Console.WriteLine("ERROR HERE");
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -63,11 +56,8 @@ namespace Jeopicodus
                 options.Password.RequiredUniqueChars = 0;
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSignalR();
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
