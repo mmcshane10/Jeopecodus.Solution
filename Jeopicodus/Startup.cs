@@ -100,6 +100,7 @@ namespace Jeopicodus
             app.UseSignalR(routes =>
             {
                 routes.MapHub<GameHub>("/gamehub");
+                routes.MapHub<GameHub>("/playhub");
             });
         }
     }

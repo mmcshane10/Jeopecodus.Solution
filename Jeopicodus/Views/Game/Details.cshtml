@@ -1,5 +1,6 @@
 @using Jeopicodus.ViewModels
 @using Jeopicodus.Models
+@using System.Security.Claims
 @model GameDetailsViewModel
 
 <div class="jumbotron">
@@ -7,6 +8,21 @@
 </div>
 
 <div class="container">
+    <div id="scoreboard" class="row">
+        @{
+            List<Team> TeamList = new List<Team>{};
+        }
+        @foreach(Team team in Model.Game.Teams)
+        {
+            TeamList.Add(team);
+        }
+        <div class="col-sm" id="team1-scoreboard">
+            <h5>@TeamList[0].TeamName<span class="scoreboard-score">@Model.Game.ScoreTeam1</span></h5>
+        </div>
+        <div class="col-sm" id="team2-scoreboard">
+            <h5><span class="scoreboard-score">@Model.Game.ScoreTeam2</span>@TeamList[1].TeamName</h5>
+        </div>
+    </div>
     <div id="gameboard">
         <div id="catagories" class="row">
             <div class="col-sm cat-1">
@@ -29,6 +45,11 @@
         @for(int i = 1; i <=5; i++)
         {
             var difficulty = "Easy";
+            var index = 0;
+            if(i % 2 == 0)
+            {
+                index = 1;
+            }
             if(i > 2 && i < 5)
             {
                 difficulty = "Medium";
@@ -36,11 +57,11 @@
             else if (i == 5){
                 difficulty = "Hard";
             }
-            Question q1 = @Model.Questions[@Model.Categories[0] + "_" + @difficulty][0];
-            Question q2 = @Model.Questions[@Model.Categories[1] + "_" + @difficulty][0];
-            Question q3 = @Model.Questions[@Model.Categories[2] + "_" + @difficulty][0];
-            Question q4 = @Model.Questions[@Model.Categories[3] + "_" + @difficulty][0];
-            Question q5 = @Model.Questions[@Model.Categories[4] + "_" + @difficulty][0];
+            Question q1 = @Model.Questions[@Model.Categories[0] + "_" + @difficulty][index];
+            Question q2 = @Model.Questions[@Model.Categories[1] + "_" + @difficulty][index];
+            Question q3 = @Model.Questions[@Model.Categories[2] + "_" + @difficulty][index];
+            Question q4 = @Model.Questions[@Model.Categories[3] + "_" + @difficulty][index];
+            Question q5 = @Model.Questions[@Model.Categories[4] + "_" + @difficulty][index];
 
             <div id="level-@i" class="row">
                 <div class="col-sm cat-q-1">
@@ -87,20 +108,18 @@
 
 <script type="text/javascript">
     const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl("/playHub")
+                .withUrl("/gameHub")
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
-    @*var playerId = '@Model.User.Id';*@
+    var playerTeam = '@Model.UserTeam';
     hubConnection.start();
 
     $(document).ready(function(){
-       @* hubConnection.invoke('JoinHub', playerId); *@
         $(".col-sm").click(function(event){
-            if($(this).attr('class').indexOf('cat-q') !== -1) {
+            if(($(this).attr('class').indexOf('cat-q') !== -1) && ($(this).find(".card").attr('class').indexOf('answered') === -1)) {
                 var questionId = event.target.closest(".card").id;
-                var question = getQuestion(questionId);
-                $(".modal-body").text(question);
-                $(".modal").modal('show');
+                hubConnection.invoke('QuestionClicked', questionId +"#" + playerTeam);
+
             }
         });
         $(".modal").each(function(l){
@@ -108,6 +127,14 @@
                 var o=$(this).attr("data-easein");
                 $(".modal-dialog").velocity("transition."+o)
             })
+        });
+
+        hubConnection.on('showQuestion', id => {
+            console.log(id);
+            $(document).find("#"+id+".card").addClass("answered");
+            var question = getQuestion(id);
+            $(".modal-body").text(question);
+            $(".modal").modal('show');
         });
 
         function getQuestion(id){
@@ -120,6 +147,23 @@
             }
             return "Question Not Found";
         }
+
+        foreach(Team team in @Model.Game.Teams)
+        let opponent;
+        {
+            if (team.TeamName != @Model.UserTeam)
+            {
+                opponent = team.TeamName;
+                $("#scoreboard-other-team").append();
+                break;
+            }
+            else
+            {
+                continue;
+            }
+
+        }
+        console.log(opponent);
     });
     
 </script>
