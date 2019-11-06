@@ -1,22 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+    <BuildEnvironment>DEV</BuildEnvironment>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>aspnet-Jeopicodus.Solution-58C2B63C-062B-47B1-8A09-8AACB92B00EA</UserSecretsId>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <Choose>
+  <When Condition=" '$(BuildEnvironment)' == 'DEV' ">
+      <ItemGroup>
+          <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
+      </ItemGroup>
+  </When>
+  <When Condition=" '$(BuildEnvironment)' == 'PROD' ">
+      <ItemGroup>
+          <PackageReference Include="MySqlConnector" Version="0.60.3" />
+      </ItemGroup>
+  </When>
+  </Choose>
 
-  <ItemGroup>
-
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="MySqlConnector" Version="0.60.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
     <PackageReference Include="RestSharp" Version="106.6.10" />
   </ItemGroup>
 

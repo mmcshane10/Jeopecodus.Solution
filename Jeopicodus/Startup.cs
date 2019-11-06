@@ -18,9 +18,18 @@ namespace Jeopicodus
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            Configuration = configuration;
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+            {
+                Configuration = configuration;
+            }
+            else{
+                var builder = new ConfigurationBuilder()
+                    .SetBasePath(env.ContentRootPath)
+                    .AddJsonFile("appsettings.json");
+                Configuration = builder.Build();
+            }
         }
 
         public IConfiguration Configuration { get; set; }
@@ -38,7 +47,6 @@ namespace Jeopicodus
                 .AddDbContext<JeopicodusContext>(options => options
                 .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
             }
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
 
@@ -56,6 +64,7 @@ namespace Jeopicodus
                 options.Password.RequiredUniqueChars = 0;
             });
 
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSignalR();
         }
