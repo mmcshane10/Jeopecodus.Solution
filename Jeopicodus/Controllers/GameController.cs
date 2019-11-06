@@ -23,12 +23,20 @@ namespace Jeopicodus.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<ActionResult> Index()
         {
             if (User.Identity.IsAuthenticated)
             {
                 List<Game> games = _db.Games.Where(game => game.Status != GameStatus.GAME_OVER).ToList();
-                return View(games);
+                List<Team> teams = _db.Teams.ToList();
+                for(int i = 0; i < games.Count; i++)
+                {
+                    games[i].Teams = teams.Where(team => team.GameId == games[i].GameId).ToList();
+                }
+                var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var currentUser = await _userManager.FindByIdAsync(userId);
+                GameIndexViewModel model = new GameIndexViewModel() { Games = games, User = currentUser };
+                return View(model);
             }
             else
             {
