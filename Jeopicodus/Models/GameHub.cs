@@ -35,7 +35,6 @@ namespace Jeopicodus.Models
             }
         }
 
-
         public void CreateGame(string data)
         {
             var splitData = data?.Split(new char[] {

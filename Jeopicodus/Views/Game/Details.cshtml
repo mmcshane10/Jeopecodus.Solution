@@ -84,8 +84,17 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.ui.min.js"></script>
+
 <script type="text/javascript">
+    const hubConnection = new signalR.HubConnectionBuilder()
+                .withUrl("/playHub")
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+    @*var playerId = '@Model.User.Id';*@
+    hubConnection.start();
+
     $(document).ready(function(){
+       @* hubConnection.invoke('JoinHub', playerId); *@
         $(".col-sm").click(function(event){
             if($(this).attr('class').indexOf('cat-q') !== -1) {
                 var questionId = event.target.closest(".card").id;

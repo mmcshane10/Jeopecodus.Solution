@@ -50,11 +50,26 @@ namespace Jeopicodus.Controllers
         public async Task<ActionResult> Details(int id)
         {
             Game thisGame = _db.Games.Include(game => game.Teams).ThenInclude(team => team.Users).FirstOrDefault(game => game.GameId == id);
-            Console.WriteLine(">>>>>>>>>>>>>>>" + thisGame.Teams.Count);
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var currentUser = await _userManager.FindByIdAsync(userId);
-            
-            var teamName = "";
+            var teamCount = 1;
+            foreach(Team team in thisGame.Teams)
+            {
+                if(teamCount == 1)
+                {
+                    team.IsTurn = true;
+                    teamCount++;
+                }
+                else
+                {
+                    team.IsTurn = false;
+                }
+                List<string> users = team.Users.Select(u => u.ApplicationUserId).ToList();
+                if(users.Contains(userId))
+                {
+                    currentUser.TeamName = team.TeamName;
+                }
+            }
 
             List<Question> questionList = Game.Questions;
             Dictionary<string,List<Question>> questions = new Dictionary<string, List<Question>>();
@@ -80,7 +95,7 @@ namespace Jeopicodus.Controllers
                 categories.Remove(categories[indexToRemove]);
             }
 
-            GameDetailsViewModel model = new GameDetailsViewModel(){UserTeam = teamName, Game = thisGame, Questions = questions, Categories = categories};
+            GameDetailsViewModel model = new GameDetailsViewModel(){UserTeam = currentUser.TeamName, Game = thisGame, Questions = questions, Categories = categories};
             return View(model);
         }
 
