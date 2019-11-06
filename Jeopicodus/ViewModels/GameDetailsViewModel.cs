@@ -9,5 +9,6 @@ namespace Jeopicodus.ViewModels
         public Game Game { get; set; }
         public string UserTeam { get; set; }
         public List<string> Categories { get; set; }
+        public List<string> TeamNames { get; set; }
     }
 }

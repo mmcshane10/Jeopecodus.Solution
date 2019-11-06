@@ -59,6 +59,7 @@ h1, h2
 .jumbotron 
 {
     background-color:  rgb(252, 255, 88);
+    border: 5px solid black;
 }
 
 .modal-content 
@@ -83,4 +84,29 @@ h1, h2
 .flex-container .card
 {
     margin: 10px;
+}
+
+#scoreboard
+{
+    background-color: yellow;
+    border: 5px solid black;
+    margin-bottom: 20px;
+}
+
+#team2-scoreboard
+{
+    text-align: right;
+}
+
+#team1-scoreboard h5, #team2-scoreboard h5
+{
+    font-weight: bold;
+    font-size: 30px;
+    color: #454545;
+}
+
+.scoreboard-score
+{
+    margin-left: 15px;
+    margin-right: 15px;
 }
