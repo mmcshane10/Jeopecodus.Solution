@@ -57,13 +57,15 @@ namespace Jeopicodus.Controllers
             {
                 if(teamCount == 1)
                 {
-                    team.IsTurn = true;
                     teamCount++;
+                    team.IsTurn = true;
                 }
                 else
                 {
                     team.IsTurn = false;
                 }
+                _db.Entry(team).State = EntityState.Modified;
+                _db.SaveChanges();
                 List<string> users = team.Users.Select(u => u.ApplicationUserId).ToList();
                 if(users.Contains(userId))
                 {

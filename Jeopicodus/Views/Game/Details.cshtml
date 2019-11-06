@@ -1,5 +1,6 @@
 @using Jeopicodus.ViewModels
 @using Jeopicodus.Models
+@using System.Security.Claims
 @model GameDetailsViewModel
 
 <div class="jumbotron">
@@ -29,6 +30,11 @@
         @for(int i = 1; i <=5; i++)
         {
             var difficulty = "Easy";
+            var index = 0;
+            if(i % 2 == 0)
+            {
+                index = 1;
+            }
             if(i > 2 && i < 5)
             {
                 difficulty = "Medium";
@@ -36,11 +42,11 @@
             else if (i == 5){
                 difficulty = "Hard";
             }
-            Question q1 = @Model.Questions[@Model.Categories[0] + "_" + @difficulty][0];
-            Question q2 = @Model.Questions[@Model.Categories[1] + "_" + @difficulty][0];
-            Question q3 = @Model.Questions[@Model.Categories[2] + "_" + @difficulty][0];
-            Question q4 = @Model.Questions[@Model.Categories[3] + "_" + @difficulty][0];
-            Question q5 = @Model.Questions[@Model.Categories[4] + "_" + @difficulty][0];
+            Question q1 = @Model.Questions[@Model.Categories[0] + "_" + @difficulty][index];
+            Question q2 = @Model.Questions[@Model.Categories[1] + "_" + @difficulty][index];
+            Question q3 = @Model.Questions[@Model.Categories[2] + "_" + @difficulty][index];
+            Question q4 = @Model.Questions[@Model.Categories[3] + "_" + @difficulty][index];
+            Question q5 = @Model.Questions[@Model.Categories[4] + "_" + @difficulty][index];
 
             <div id="level-@i" class="row">
                 <div class="col-sm cat-q-1">
@@ -87,21 +93,18 @@
 
 <script type="text/javascript">
     const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl("/playHub")
+                .withUrl("/gameHub")
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
-    @*var playerId = '@Model.User.Id';*@
+    var playerTeam = '@Model.UserTeam';
     hubConnection.start();
 
     $(document).ready(function(){
-       @* hubConnection.invoke('JoinHub', playerId); *@
         $(".col-sm").click(function(event){
             if(($(this).attr('class').indexOf('cat-q') !== -1) && ($(this).find(".card").attr('class').indexOf('answered') === -1)) {
                 var questionId = event.target.closest(".card").id;
-                var question = getQuestion(questionId);
-                $(this).find(".card").addClass("answered")
-                $(".modal-body").text(question);
-                $(".modal").modal('show');
+                hubConnection.invoke('QuestionClicked', questionId +"#" + playerTeam);
+
             }
         });
         $(".modal").each(function(l){
@@ -109,6 +112,14 @@
                 var o=$(this).attr("data-easein");
                 $(".modal-dialog").velocity("transition."+o)
             })
+        });
+
+        hubConnection.on('showQuestion', id => {
+            console.log(id);
+            $(document).find("#"+id+".card").addClass("answered");
+            var question = getQuestion(id);
+            $(".modal-body").text(question);
+            $(".modal").modal('show');
         });
 
         function getQuestion(id){
