@@ -25,7 +25,7 @@
                         <hr>
                         <div id="team-@game.Teams[0].TeamId" class="members team-one-members">
                         </div>
-                        <button class="btn btn-primary">Join Team</button>
+                        <button class="join-team btn btn-primary">Join Team</button>
                     </div>
                 </div>
                 <div class="col-sm">
@@ -36,7 +36,7 @@
                             <hr>
                             <div id="team-@game.Teams[1].TeamId" class="members team-two-members">
                             </div>
-                            <button class="btn btn-primary">Join Team</button>
+                            <button class="join-team btn btn-primary">Join Team</button>
                         }
                         else
                         {
@@ -61,10 +61,10 @@
     var playerId = '@Model.User.Id';
     hubConnection.start();
     $(document).ready(function(){
-        $('.team-one button').click(function(){
+        $('.team-one .join-team').click(function(){
             getTeamData(this);
         });
-        $('.team-two button').click(function(){
+        $('.team-two .join-team').click(function(){
             getTeamData(this);
         });
         $('.team-two-name').submit(function(event){
@@ -72,7 +72,7 @@
             const gameIdString = $(this).closest(".card").attr("id");
             const gameId = gameIdString.substring(gameIdString.indexOf("-")+1);
             const team2Name = $('#team2name-' + gameId).val();
-            hubConnection.invoke('CreateTeam', gameId + "#" + team2name + "#" + playerId);
+            hubConnection.invoke('CreateTeam', gameId + "#" + team2Name + "#" + playerId);
         });
         $('#team-one-name').submit(function(event){
             event.preventDefault();
@@ -84,7 +84,6 @@
             const gameIdString = $(element).closest(".card").attr("id");
             const gameId = gameIdString.substring(gameIdString.indexOf("-")+1);
             const teamIdString = $(element).closest(".card-body").find(".members").attr("id");
-            console.log(teamIdString);
             const teamId = teamIdString.substring(teamIdString.indexOf("-")+1);
             hubConnection.invoke('JoinTeam', gameId + "#" + teamId + "#" + playerId);
         }
