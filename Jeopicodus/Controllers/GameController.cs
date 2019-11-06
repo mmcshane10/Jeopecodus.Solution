@@ -45,19 +45,20 @@ namespace Jeopicodus.Controllers
         }
 
         [Authorize]
+        [Route("Game/Details/{id}")]
         public async Task<ActionResult> Details(int id)
         {
             Game thisGame = _db.Games.FirstOrDefault(game => game.GameId == id);
-
+            
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var currentUser = await _userManager.FindByIdAsync(userId);
-            string teamName = currentUser.TeamName;
+            
+            var teamName = "";
 
             List<Question> questionList = Game.Questions;
             Dictionary<string,List<Question>> questions = new Dictionary<string, List<Question>>();
             foreach(Question q in questionList)
             {
-                Console.WriteLine(q.Id);
                 if(!questions.Keys.Contains(q.Category + "_" + q.Difficulty))
                 {
                     questions.Add(q.Category + "_" + q.Difficulty, new List<Question>{q});

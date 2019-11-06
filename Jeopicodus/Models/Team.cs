@@ -8,11 +8,11 @@ namespace Jeopicodus.Models
         public int GameId { get; set; }
         public bool IsTurn { get; set; }
         public string TeamName { get; set; }
-        public virtual ICollection<ApplicationUser> Users { get; set; }
+        public virtual ICollection<TeamMember> Users { get; set; }
 
         public Team()
         {
-            Users = new HashSet<ApplicationUser>();
+            Users = new HashSet<TeamMember>();
         }
     }
 }

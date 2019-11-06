@@ -16,7 +16,7 @@ namespace Jeopicodus.Models
         public DateTime TimeStarted { get; set; }
         public string TimeRemaining { get; set; }
         public string WinningTeam { get; set; }
-        public IList<Team> Teams { get; set; }
+        public ICollection<Team> Teams { get; set; }
         public static List<Question> Questions = MakeQuestions();
         
         public Game()
@@ -24,7 +24,7 @@ namespace Jeopicodus.Models
             ScoreTeam1 = 0;
             ScoreTeam2 = 0;
             Status = GameStatus.ACCEPTING_PLAYERS;
-            Teams = new List<Team>();
+            Teams = new HashSet<Team>();
         }
 
         public static List<Question> MakeQuestions()

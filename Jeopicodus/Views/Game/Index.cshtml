@@ -19,37 +19,54 @@
 
     @foreach(Game game in Model.Games)
     {
+        var count = game.Teams.Count;
+        var teamOrder = "one";
+        var counter = 0;
+
         <div id="gameId-@game.GameId" class="card">
             <div class="row">
-                <div class="col-sm">
-                    <div class="card-body team-one">
-                        <h5 class="card-title">@game.Teams[0].TeamName</h5>
-                        <hr>
-                        <div id="team-@game.Teams[0].TeamId" class="members team-one-members">
-                        </div>
-                        <button class="join-team btn btn-primary">Join Team</button>
-                    </div>
-                </div>
-                <div class="col-sm">
-                    <div class="card-body team-two">
-                        @if (@game.Teams.Count > 1)
-                        {
-                            <h5 class="card-title">@game.Teams[1].TeamName</h5>
-                            <hr>
-                            <div id="team-@game.Teams[1].TeamId" class="members team-two-members">
+                @foreach (Team team in game.Teams)
+                {
+                    counter++;
+                    @if(counter == 2)
+                    {
+                        teamOrder = "two";
+                    }
+
+                    @if(count == 1)
+                    {
+                        <div class="col-sm">
+                            <div class="card-body team-one">
+                                <h5 class="card-title">@team.TeamName</h5>
+                                <hr>
+                                <div id="team-@team.TeamId" class="members team-one-members">
+                                </div>
+                                <button class="join-team btn btn-primary">Join Team</button>
                             </div>
-                            <button class="join-team btn btn-primary">Join Team</button>
-                        }
-                        else
-                        {
-                            <form class="team-two-name" method="post">
-                                <label for="team2name-@game.GameId">Team Name:</label>
-                                <input id="team2name-@game.GameId" name="team2name" type="text">
-                                <button type="submit" class="btn btn-primary">Add Team</button>
-                            </form>
-                        }
-                    </div>
-                </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="card-body team-two">
+                                <form class="team-two-name" method="post">
+                                    <label for="team2name-@game.GameId">Team Name:</label>
+                                    <input id="team2name-@game.GameId" name="team2name" type="text">
+                                    <button type="submit" class="btn btn-primary">Add Team</button>
+                                </form>
+                            </div>
+                        </div>
+                    } 
+                    else
+                    {
+                        <div class="col-sm">
+                            <div class="card-body team-@teamOrder">
+                                <h5 class="card-title">@team.TeamName</h5>
+                                <hr>
+                                <div id="team-@team.TeamId" class="members team-@teamOrder-members">
+                                </div>
+                                <button class="join-team btn btn-primary">Join Team</button>
+                            </div>
+                        </div>
+                    }
+                }
             </div>
         </div>
     }

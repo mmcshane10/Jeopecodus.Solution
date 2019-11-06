@@ -7,6 +7,8 @@ namespace Jeopicodus.Models
         public int GameReference { get; set; }
         public string TeamName { get; set; }
         public string ConnectionId { get; set; }
+
+        public Team Team { get; set; }
         public ApplicationUser()
         {
             GameReference = 0;
