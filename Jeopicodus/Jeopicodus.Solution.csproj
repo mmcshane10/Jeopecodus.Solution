@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <BuildEnvironment>DEV</BuildEnvironment>
+    <BuildEnvironment>Development</BuildEnvironment>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>aspnet-Jeopicodus.Solution-58C2B63C-062B-47B1-8A09-8AACB92B00EA</UserSecretsId>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
   <Choose>
-  <When Condition=" '$(BuildEnvironment)' == 'DEV' ">
+  <When Condition=" '$(BuildEnvironment)' == 'Development' ">
       <ItemGroup>
           <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
       </ItemGroup>
   </When>
-  <When Condition=" '$(BuildEnvironment)' == 'PROD' ">
+  <When Condition=" '$(BuildEnvironment)' == 'Production' ">
       <ItemGroup>
           <PackageReference Include="MySqlConnector" Version="0.60.3" />
       </ItemGroup>
