@@ -147,23 +147,6 @@
             }
             return "Question Not Found";
         }
-
-        foreach(Team team in @Model.Game.Teams)
-        let opponent;
-        {
-            if (team.TeamName != @Model.UserTeam)
-            {
-                opponent = team.TeamName;
-                $("#scoreboard-other-team").append();
-                break;
-            }
-            else
-            {
-                continue;
-            }
-
-        }
-        console.log(opponent);
     });
     
 </script>
