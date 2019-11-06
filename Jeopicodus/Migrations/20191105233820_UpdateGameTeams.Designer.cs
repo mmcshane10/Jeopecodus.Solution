@@ -3,14 +3,16 @@ using System;
 using Jeopicodus.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Jeopicodus.Solution.Migrations
 {
     [DbContext(typeof(JeopicodusContext))]
-    partial class JeopicodusContextModelSnapshot : ModelSnapshot
+    [Migration("20191105233820_UpdateGameTeams")]
+    partial class UpdateGameTeams
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,6 +90,10 @@ namespace Jeopicodus.Solution.Migrations
 
                     b.Property<string>("Status");
 
+                    b.Property<int?>("Team1TeamId");
+
+                    b.Property<int?>("Team2TeamId");
+
                     b.Property<string>("TimeRemaining");
 
                     b.Property<DateTime>("TimeStarted");
@@ -95,6 +101,10 @@ namespace Jeopicodus.Solution.Migrations
                     b.Property<string>("WinningTeam");
 
                     b.HasKey("GameId");
+
+                    b.HasIndex("Team1TeamId");
+
+                    b.HasIndex("Team2TeamId");
 
                     b.ToTable("Games");
                 });
@@ -104,17 +114,13 @@ namespace Jeopicodus.Solution.Migrations
                     b.Property<int>("TeamId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("GameId");
-
                     b.Property<bool>("IsTurn");
 
                     b.Property<string>("TeamName");
 
                     b.HasKey("TeamId");
 
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Teams");
+                    b.ToTable("Team");
                 });
 
             modelBuilder.Entity("Jeopicodus.Models.TeamMember", b =>
@@ -245,12 +251,15 @@ namespace Jeopicodus.Solution.Migrations
                         .HasForeignKey("TeamId");
                 });
 
-            modelBuilder.Entity("Jeopicodus.Models.Team", b =>
+            modelBuilder.Entity("Jeopicodus.Models.Game", b =>
                 {
-                    b.HasOne("Jeopicodus.Models.Game")
-                        .WithMany("Teams")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("Jeopicodus.Models.Team", "Team1")
+                        .WithMany()
+                        .HasForeignKey("Team1TeamId");
+
+                    b.HasOne("Jeopicodus.Models.Team", "Team2")
+                        .WithMany()
+                        .HasForeignKey("Team2TeamId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
