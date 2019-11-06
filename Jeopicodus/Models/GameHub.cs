@@ -26,6 +26,7 @@ namespace Jeopicodus.Models
 
         public void JoinHub(string playerId)
         {
+            Console.WriteLine("Joining Hub");
             if(_userManager.Users.FirstOrDefault(player => player.ConnectionId == Context.ConnectionId) == null)
             {
                 var currentPlayer = _userManager.Users.FirstOrDefault(player => player.Id == playerId);
@@ -87,6 +88,34 @@ namespace Jeopicodus.Models
             _db.TeamMembers.Add(new TeamMember() { TeamId = Int32.Parse(teamId), ApplicationUserId = currentUser.Id });
             _db.Entry(currentGame).State = EntityState.Modified;
             _db.SaveChanges();
+        }
+
+        public void QuestionClicked(string data)
+        {
+            var splitData = data?.Split(new char[] {
+            '#' }, StringSplitOptions.None);
+            string questionId = splitData[0];
+            string teamName = splitData[1];
+            Console.WriteLine("TEAMNAME " + teamName);
+            var thisGame = _db.Games.Include(g => g.Teams).FirstOrDefault(game => game.Teams.Any(t => t.TeamName == teamName));
+
+            if (thisGame == null)
+            {
+                Console.WriteLine("No game");
+                return; // no game found with this credentials
+            }
+
+            var activeTeam = thisGame.Teams.FirstOrDefault(team => team.TeamName == teamName);
+
+            if (!activeTeam.IsTurn)
+            {
+                Console.WriteLine("Not team's turn");
+                return;  // not this team's turn, dont do anything
+            }
+
+            Console.WriteLine("Send trigger");
+            Clients.All.SendAsync("showQuestion", questionId);
+
         }
     }
 }
