@@ -96,9 +96,10 @@
     $(document).ready(function(){
        @* hubConnection.invoke('JoinHub', playerId); *@
         $(".col-sm").click(function(event){
-            if($(this).attr('class').indexOf('cat-q') !== -1) {
+            if(($(this).attr('class').indexOf('cat-q') !== -1) && ($(this).find(".card").attr('class').indexOf('answered') === -1)) {
                 var questionId = event.target.closest(".card").id;
                 var question = getQuestion(questionId);
+                $(this).find(".card").addClass("answered")
                 $(".modal-body").text(question);
                 $(".modal").modal('show');
             }
