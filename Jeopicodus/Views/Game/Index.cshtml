@@ -63,6 +63,7 @@
     var playerId = '@Model.User.Id';
     hubConnection.start();
     $(document).ready(function(){
+        hubConnection.invoke('JoinHub', playerId);
         $('.team-one .join-team').click(function(){
             getTeamData(this);
         });

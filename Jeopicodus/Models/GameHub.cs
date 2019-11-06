@@ -24,6 +24,18 @@ namespace Jeopicodus.Models
             await Clients.All.SendAsync("Send", teamName, message);
         }
 
+        public void JoinHub(string playerId)
+        {
+            if(_userManager.Users.FirstOrDefault(player => player.ConnectionId == Context.ConnectionId) == null)
+            {
+                var currentPlayer = _userManager.Users.FirstOrDefault(player => player.Id == playerId);
+                currentPlayer.ConnectionId = Context.ConnectionId;
+                _db.Entry(currentPlayer).State = EntityState.Modified;
+                _db.SaveChanges();
+            }
+        }
+
+
         public void CreateGame(string data)
         {
             var splitData = data?.Split(new char[] {
