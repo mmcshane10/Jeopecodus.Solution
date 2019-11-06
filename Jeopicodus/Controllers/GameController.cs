@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Jeopicodus.ViewModels;
 using System;
 
@@ -48,8 +49,8 @@ namespace Jeopicodus.Controllers
         [Route("Game/Details/{id}")]
         public async Task<ActionResult> Details(int id)
         {
-            Game thisGame = _db.Games.FirstOrDefault(game => game.GameId == id);
-            
+            Game thisGame = _db.Games.Include(game => game.Teams).ThenInclude(team => team.Users).FirstOrDefault(game => game.GameId == id);
+            Console.WriteLine(">>>>>>>>>>>>>>>" + thisGame.Teams.Count);
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var currentUser = await _userManager.FindByIdAsync(userId);
             

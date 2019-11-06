@@ -105,7 +105,6 @@
             var questionList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Game.Questions) as string);
             
             for(let i = 0; i < questionList.length; i++){
-                console.log(questionList[i]);
                 if(questionList[i].Id == id){
                     return questionList[i].Prompt;
                 }
