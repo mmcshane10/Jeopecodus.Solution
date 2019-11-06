@@ -18,7 +18,8 @@ namespace Jeopicodus.Models
     {
         public static async Task<string> ApiCall(string questionType)
         {
-            RestClient client = new RestClient($"http://jeopicodusapi.azurewebsites.net/api/{questionType}");
+            // RestClient client = new RestClient($"http://jeopicodusapi.azurewebsites.net/api/{questionType}");
+            RestClient client = new RestClient($"http://localhost:5000/api/{questionType}");
             RestRequest request = new RestRequest("/", Method.GET);
             var response = await client.ExecuteTaskAsync(request);
             return response.Content;
