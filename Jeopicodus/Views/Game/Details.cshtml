@@ -112,21 +112,26 @@
                 .withUrl("/gameHub")
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
-    var playerTeam = '@Model.UserTeam';
+    var playerTeamName = '@Model.TeamName';
+    var playerTeamId = '@Model.TeamId';
     hubConnection.start();
 
     function buzzIn()
     {
         var classes = $(".modal-body").attr('class');
         var questionId = classes.substring(classes.lastIndexOf("-")+1);
-        hubConnection.invoke('AnswerQuestion', questionId+"#" + playerTeam);
+        hubConnection.invoke('AnswerQuestion', questionId+"#" + playerTeamName);
+    }
+
+    function passToNextQuestion() {
+        hubConnection.invoke("NextQuestion", playerTeamId); 
     }
 
     $(document).ready(function(){
         $(".col-sm").click(function(event){
             if(($(this).attr('class').indexOf('cat-q') !== -1) && ($(this).find(".card").attr('class').indexOf('answered') === -1)) {
                 var questionId = event.target.closest(".card").id;
-                hubConnection.invoke('QuestionClicked', questionId +"#" + playerTeam);
+                hubConnection.invoke('QuestionClicked', questionId +"#" + playerTeamName);
             }
         });
         $(".modal").each(function(l){
@@ -138,6 +143,25 @@
 
         $(".modal").submit(function(event){
             event.preventDefault();
+            var classes = $(".modal-body").attr('class');
+            var questionId = classes.substring(classes.lastIndexOf("-")+1);
+            const answer = $("#answer-box").val().trim().toLowerCase();
+            var trueAnswer = getQuestionAnswer(questionId).trim().toLowerCase();
+            const value = $(document).find("#"+questionId+".card").text();
+            if($('.modal form').attr('id') == 'answer-question'){
+                if(answer === trueAnswer) {
+                    hubConnection.invoke('CorrectAnswer', playerTeamId +"#"+value);
+                } else {
+                    hubConnection.invoke('WrongAnswer', playerTeamId +"#"+value);
+                }
+            }
+            else {
+                if(answer === trueAnswer) {
+                    hubConnection.invoke('CorrectAnswer', playerTeamId +"#"+value);
+                } else {
+                    hubConnection.invoke('WrongAnswerNextQuestion', playerTeamId +"#"+value);
+                }
+            }
         });
 
         hubConnection.on('showQuestion', id => {
@@ -156,7 +180,7 @@
         });
 
         hubConnection.on('buzzedIn', activeTeam => {
-            if(activeTeam.trim() === playerTeam.trim()) {
+            if(activeTeam.trim() === playerTeamName.trim()) {
                 $('.modal-footer').html(
                     `
                     <form id="answer-question" method="post">
@@ -170,6 +194,47 @@
                 $('.modal-footer').text("Waiting for other team to answer");
             }
         });
+
+        hubConnection.on('closeModal', function(){
+            $(".modal").modal('hide');
+        });
+
+        hubConnection.on('updateScores', updatedScoreModel => {
+            $('#team1-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam1);
+            $('#team2-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam2);
+            hubConnection.invoke("UpdateTeamTurn", updatedScoreModel.activeTeamId);
+            $('.modal').modal("hide");
+        });
+
+        hubConnection.on('otherTeamToTry', updatedScoreModel => {
+            $('#team1-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam1);
+            $('#team2-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam2);
+            if(updatedScoreModel.activeTeamId.trim() === playerTeamId.trim()) {
+                $('.modal-footer').html(
+                    `
+                    <form id="answer-question" method="post">
+                        <input id="answer-box" name="answer-box" type="text" placeholder="Enter Your Answer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    <button type="button" onclick="passToNextQuestion()" class="btn btn-warning">Pass</button>
+                    `
+                );
+            }
+            else {
+                $('.modal-footer').text("Waiting for other team to answer");
+            }
+        });
+
+        function getQuestionAnswer(id) {
+            var questionList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Game.Questions) as string);
+            
+            for(let i = 0; i < questionList.length; i++){
+                if(questionList[i].Id == id){
+                    return questionList[i].Answer;
+                }
+            }
+            return "Question Not Found";
+        }
 
         function getQuestion(id){
             var questionList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Game.Questions) as string);

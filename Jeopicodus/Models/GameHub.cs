@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Jeopicodus.Entities;
 
 namespace Jeopicodus.Models
 {
@@ -158,5 +159,168 @@ namespace Jeopicodus.Models
             Console.WriteLine("active team" + activeTeam.TeamName);
             Clients.All.SendAsync("buzzedIn", activeTeam.TeamName);
         }
+
+        public void CorrectAnswer(string data)
+        {
+
+            var splitData = data?.Split(new char[] {
+            '#' }, StringSplitOptions.None);
+            string teamId = splitData[0];
+            string valueToAdd = splitData[1];
+
+            var game = _db.Games.Include(g => g.Teams).FirstOrDefault(g => g.Teams.Any(t => t.TeamId.ToString() == teamId));
+
+            if( game == null) 
+            {
+                Console.WriteLine("No Game Found");
+                return ; // no game found
+            }
+            var thisTeam = game.Teams.FirstOrDefault(t => t.TeamId.ToString() == teamId);
+            if(thisTeam == null || thisTeam.IsTurn == false )
+            {
+                Console.WriteLine("Not Allowed to Submit Answer");
+                return ;
+            }
+            List<Team> TeamList = new List<Team> { };
+            foreach(Team team in game.Teams)
+            {
+                TeamList.Add(team);
+            }
+            int teamIndex = TeamList.IndexOf(game.Teams.FirstOrDefault(t => t.TeamId.ToString() == teamId));
+            thisTeam.IsTurn = false;
+            if(teamIndex == 0)
+            {
+                game.ScoreTeam1 += Int32.Parse(valueToAdd);
+            }
+            else 
+            {
+                game.ScoreTeam2 += Int32.Parse(valueToAdd);
+            }
+            _db.Entry(thisTeam).State = EntityState.Modified;
+            _db.Entry(game).State = EntityState.Modified;
+            _db.SaveChanges();
+
+            Clients.All.SendAsync("updateScores", new UpdateScoresModel() { Game = game, ActiveTeamId = teamId});
+            
+        }
+
+        public void WrongAnswer(string data)
+        {
+            var splitData = data?.Split(new char[] {
+            '#' }, StringSplitOptions.None);
+            string teamId = splitData[0];
+            string valueToLose = splitData[1];
+
+            var game = _db.Games.Include(g => g.Teams).FirstOrDefault(g => g.Teams.Any(t => t.TeamId.ToString() == teamId));
+
+            if (game == null)
+            {
+                Console.WriteLine("No Game Found");
+                return; // no game found
+            }
+            var thisTeam = game.Teams.FirstOrDefault(t => t.TeamId.ToString() == teamId);
+            if (thisTeam == null || thisTeam.IsTurn == false)
+            {
+                Console.WriteLine("Not Allowed to Submit Answer");
+                return;
+            }
+            List<Team> TeamList = new List<Team> { };
+            foreach (Team team in game.Teams)
+            {
+                TeamList.Add(team);
+            }
+            int teamIndex = TeamList.IndexOf(game.Teams.FirstOrDefault(t => t.TeamId.ToString() == teamId));
+            thisTeam.IsTurn = false;
+            string nextTeamId = "";
+            if (teamIndex == 0)
+            {
+                game.ScoreTeam1 -= Int32.Parse(valueToLose);
+                TeamList[1].IsTurn = true;
+                nextTeamId = TeamList[1].TeamId.ToString();
+            }
+            else
+            {
+                game.ScoreTeam2 -= Int32.Parse(valueToLose);
+                TeamList[0].IsTurn = true;
+                nextTeamId = TeamList[0].TeamId.ToString();
+            }
+            _db.Entry(TeamList[0]).State = EntityState.Modified;
+            _db.Entry(TeamList[1]).State = EntityState.Modified;
+            _db.Entry(game).State = EntityState.Modified;
+            _db.SaveChanges();
+
+            Clients.All.SendAsync("otherTeamToTry", new UpdateScoresModel() { Game = game, ActiveTeamId = nextTeamId });
+        }
+
+        public void UpdateTeamTurn(string teamId)
+        {
+            var game = _db.Games.Include(g => g.Teams).FirstOrDefault(g => g.Teams.Any(t => t.TeamId.ToString() == teamId));
+
+            if (game == null)
+            {
+                Console.WriteLine("No Game Found");
+                return; // no game found
+            }
+            var thisTeam = game.Teams.FirstOrDefault(t => t.TeamId.ToString() == teamId);
+            if (thisTeam == null)
+            {
+                Console.WriteLine("Team Not Found");
+                return;
+            }
+            thisTeam.IsTurn = true;
+            _db.Entry(thisTeam).State = EntityState.Modified;
+            _db.SaveChanges();
+        }
+
+        public void WrongAnswerNextQuestion(string data){
+            var splitData = data?.Split(new char[] {
+            '#' }, StringSplitOptions.None);
+            string teamId = splitData[0];
+            string valueToLose = splitData[1];
+
+            var game = _db.Games.Include(g => g.Teams).FirstOrDefault(g => g.Teams.Any(t => t.TeamId.ToString() == teamId));
+
+            if (game == null)
+            {
+                Console.WriteLine("No Game Found");
+                return; // no game found
+            }
+            var thisTeam = game.Teams.FirstOrDefault(t => t.TeamId.ToString() == teamId);
+            if (thisTeam == null || thisTeam.IsTurn == false)
+            {
+                Console.WriteLine("Not Allowed to Submit Answer");
+                return;
+            }
+            List<Team> TeamList = new List<Team> { };
+            foreach (Team team in game.Teams)
+            {
+                TeamList.Add(team);
+            }
+            int teamIndex = TeamList.IndexOf(game.Teams.FirstOrDefault(t => t.TeamId.ToString() == teamId));
+            thisTeam.IsTurn = false;
+            if (teamIndex == 0)
+            {
+                game.ScoreTeam1 -= Int32.Parse(valueToLose);
+                TeamList[1].IsTurn = false;
+            }
+            else
+            {
+                game.ScoreTeam2 -= Int32.Parse(valueToLose);
+                TeamList[0].IsTurn = false;
+            }
+            _db.Entry(TeamList[0]).State = EntityState.Modified;
+            _db.Entry(TeamList[1]).State = EntityState.Modified;
+            _db.Entry(game).State = EntityState.Modified;
+            _db.SaveChanges();
+
+            Clients.All.SendAsync("updateScores", new UpdateScoresModel() { Game = game, ActiveTeamId = teamId });
+        }
+
+        public void NextQuestion(string teamId)
+        {
+            Clients.All.SendAsync("closeModal");
+        }
+
+
     }
 }
