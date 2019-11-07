@@ -119,8 +119,8 @@ namespace Jeopicodus.Models
         }
         public async Task GameAdded()
         {
-            List<Game> foundGames = _db.Games.ToList();
-            await Clients.All.SendAsync("ShowGames", foundGames);
+            List<Game> gameData = _db.Games.ToList();
+            await Clients.All.SendAsync("ShowGames", gameData);
         }
     }
 }

@@ -22,6 +22,7 @@
 </div>
 
 <script type="text/javascript">
+    var data = '@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Games) as string)'
     const hubConnection = new signalR.HubConnectionBuilder()
                     .withUrl("/gameHub")
                     .configureLogging(signalR.LogLevel.Information)
@@ -29,9 +30,9 @@
     var playerId = '@Model.User.Id';
     hubConnection.start();
     $(document).ready(function(){
-        writeGames(@Model.Games);
+        writeGames(data);
         hubConnection.invoke('JoinHub', playerId);
-        hubConnection.on("ShowGames",foundGames =>{
+        hubConnection.on("ShowGames",gameData =>{
             writeGames(gameData);
         });
         $('.team-one .join-team').click(function(){
@@ -66,13 +67,17 @@
         }
 
     });
-    function writeGames(@Model.Games){
-       $("#showJSGames").html(@foreach(Game game in Model.Games)
-    {
+    function writeGames(htmlToInsert){
+       $("#showJSGames").innerHTML(htmlToInsert);
+    };
+       var htmlToInsert = 
+       " <div>
+       @foreach(Game game in Model.Games)
+        {
         var count = game.Teams.Count;
         var teamOrder = "one";
         var counter = 0;
-
+        
         <div id="gameId-@game.GameId" class="card">
             <div class="row">
                 @foreach (Team team in game.Teams)
@@ -119,5 +124,7 @@
                 }
             </div>
         </div>
-    })};
+    };
+    </div>"
+ 
 </script>
