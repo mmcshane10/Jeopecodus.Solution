@@ -112,15 +112,51 @@ namespace Jeopicodus.Models
                 Console.WriteLine("Not team's turn");
                 return;  // not this team's turn, dont do anything
             }
+            else
+            {
+                activeTeam.IsTurn = false;
+                _db.Entry(thisGame).State = EntityState.Modified;
+                _db.SaveChanges();
+            }
 
-            Console.WriteLine("Send trigger");
             Clients.All.SendAsync("showQuestion", questionId);
 
         }
+
         public void GameAdded()
         {
             List<Game> gameData = _db.Games.Include(g => g.Teams).ToList();
             Clients.All.SendAsync("ShowGames", gameData);
+        }
+
+        public void AnswerQuestion(string data)
+        {
+            var splitData = data?.Split(new char[] {
+            '#' }, StringSplitOptions.None);
+            string questionId = splitData[0];
+            string teamName = splitData[1];
+            var thisGame = _db.Games.Include(g => g.Teams).FirstOrDefault(game => game.Teams.Any(t => t.TeamName == teamName));
+
+            if (thisGame == null)
+            {
+                Console.WriteLine("No game");
+                return; // no game found with this credentials
+            }
+
+            var activeTeam = thisGame.Teams.FirstOrDefault(team => team.TeamName == teamName);
+
+            if (thisGame.Teams.Where(team => team.IsTurn == true).ToList().Count > 0)
+            {
+                Console.WriteLine("Already triggered");
+                return;  // not this team's turn, dont do anything
+            }
+
+            activeTeam.IsTurn = true;
+            _db.Entry(thisGame).State = EntityState.Modified;
+            _db.SaveChanges();
+
+            Console.WriteLine("active team" + activeTeam.TeamName);
+            Clients.All.SendAsync("buzzedIn", activeTeam.TeamName);
         }
     }
 }

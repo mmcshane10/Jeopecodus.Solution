@@ -111,7 +111,12 @@ h1, h2
     margin-left: 15px;
     margin-right: 15px;
 }
+
 .answered 
 {
     color: #0709CE;
+}
+
+#bg-yellow {
+    background-color: yellow;
 }

@@ -70,6 +70,8 @@ namespace Jeopicodus.Controllers
                 if(users.Contains(userId))
                 {
                     currentUser.TeamName = team.TeamName;
+                    _db.Entry(currentUser).State = EntityState.Modified;
+                    _db.SaveChanges();
                 }
             }
 
