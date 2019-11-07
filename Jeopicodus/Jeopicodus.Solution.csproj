@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <BuildEnvironment>Development</BuildEnvironment>
+    <BuildEnvironment>Production</BuildEnvironment>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>aspnet-Jeopicodus.Solution-58C2B63C-062B-47B1-8A09-8AACB92B00EA</UserSecretsId>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
