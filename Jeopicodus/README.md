@@ -20,13 +20,23 @@ _The purpose of this application is to allow two teams to compete at the game of
 | Spec                      |Input          | Output |
 |:---------------------------|:-------------|:------|
 |Allows the user to create a new game |`New Game`| _Creates new game and adds user to game._|
-|Allows user to Join a Game that has already been created_|`Join Game`|_Adds user to game._
-|Initializes the game with all users assigned to it| `Game Start`| _LETS PLAY JEOPARDY!_  
+|Allows user to Join a Game that has already been created_|`Join Game`|_Adds user to game._|
+|Initializes the game with all users assigned to it| `Game Start`| _LETS PLAY JEOPARDY!_ | 
 
 * #### Game Play
 | Spec                      |Input          | Output |
 |:---------------------------|:-------------|:------|
-|Displays the game board for all teams|
+|Displays the game board for all teams|`Game Starts`| `All users on all screens see gameboard`|
+|Populates the game board with questions pulled from Jeopicodus API| `Game Starts`| `Game board populates with unique questions from api`|
+|Disables clicking of categories for one team, creating turns| `Team one Turn`|`Team two may not click`|
+|Allows the team up to select a question|`Clicks Category`|`Question shows`|
+|Allows any team to "buzz in" by clicking the question|`Team 1 "buzz in"`|`Team 1's screen shows answer form`|
+|Awards Team points for a correct answer|`CORRECT ANSWER!`|`Team 1 score up ## points`|
+|If a team answers incorrectly, question is clickable by other teams| `WRONG ANSWER`| `Other teams able to "buzz in"/click on question|
+|After a question is answered or goes unanswered, Category selection reopens for other team| `CORRECT ANSWER` | `Other team now able to select question`|
+|When all questions have been played upon, game ends, alerting victor| Team 1 Score: 5000, Team 2 Score: 5400| `TEAM 2 WINS`|
+|When game ends, GameBoard is hidden and both teams are returned to Game selection.| `TEAM 2 WINS`| _Team Selection and Game Creation screen displays._|
+
 
 
 ## Setup/Installation Requirements
@@ -39,9 +49,9 @@ _There are no known bugs at this time._
 ## Support and contact details
 
 _Send any questions or comments to:
-Christine Frank at   
-Chris Burge at   
-Mike McShane at   
+Christine Frank at christine.braun13@gmail.com  
+Chris Burge at topher.burge@gmail.com
+Mike McShane at  mmchane10@gmail.com 
 Devin Cooley at dcooley1350@gmail.com._
 
 ## Technologies Used
