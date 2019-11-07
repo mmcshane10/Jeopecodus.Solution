@@ -53,6 +53,7 @@ namespace Jeopicodus.Controllers
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var currentUser = await _userManager.FindByIdAsync(userId);
             var teamCount = 1;
+            Team userTeam = new Team();
             foreach(Team team in thisGame.Teams)
             {
                 if(teamCount == 1)
@@ -72,8 +73,10 @@ namespace Jeopicodus.Controllers
                     currentUser.TeamName = team.TeamName;
                     _db.Entry(currentUser).State = EntityState.Modified;
                     _db.SaveChanges();
+                    userTeam = team;
                 }
             }
+
 
             List<Question> questionList = Game.Questions;
             Dictionary<string,List<Question>> questions = new Dictionary<string, List<Question>>();
@@ -99,7 +102,7 @@ namespace Jeopicodus.Controllers
                 categories.Remove(categories[indexToRemove]);
             }
 
-            GameDetailsViewModel model = new GameDetailsViewModel(){UserTeam = currentUser.TeamName, Game = thisGame, Questions = questions, Categories = categories};
+            GameDetailsViewModel model = new GameDetailsViewModel(){ TeamName = userTeam.TeamName, TeamId = userTeam.TeamId.ToString() , Game = thisGame, Questions = questions, Categories = categories};
             return View(model);
         }
 

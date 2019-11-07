@@ -7,7 +7,9 @@ namespace Jeopicodus.ViewModels
     {
         public Dictionary<string, List<Question>> Questions { get; set; }
         public Game Game { get; set; }
-        public string UserTeam { get; set; }
+        public string TeamName { get; set; }
+
+        public string TeamId { get; set; }
         public List<string> Categories { get; set; }
         public List<string> TeamNames { get; set; }
     }

@@ -10,7 +10,6 @@
   <Choose>
   <When Condition=" '$(BuildEnvironment)' == 'Development' ">
       <ItemGroup>
-          <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
       </ItemGroup>
   </When>
   <When Condition=" '$(BuildEnvironment)' == 'Production' ">
@@ -22,6 +21,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
