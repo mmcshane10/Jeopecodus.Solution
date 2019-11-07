@@ -54,12 +54,14 @@ namespace Jeopicodus.Controllers
             var currentUser = await _userManager.FindByIdAsync(userId);
             var teamCount = 1;
             Team userTeam = new Team();
+            string activeTeam = "";
             foreach(Team team in thisGame.Teams)
             {
                 if(teamCount == 1)
                 {
                     teamCount++;
                     team.IsTurn = true;
+                    activeTeam = team.TeamName;
                 }
                 else
                 {
@@ -102,7 +104,7 @@ namespace Jeopicodus.Controllers
                 categories.Remove(categories[indexToRemove]);
             }
 
-            GameDetailsViewModel model = new GameDetailsViewModel(){ TeamName = userTeam.TeamName, TeamId = userTeam.TeamId.ToString() , Game = thisGame, Questions = questions, Categories = categories};
+            GameDetailsViewModel model = new GameDetailsViewModel(){ ActiveTeam = activeTeam, TeamName = userTeam.TeamName, TeamId = userTeam.TeamId.ToString() , Game = thisGame, Questions = questions, Categories = categories};
             return View(model);
         }
 

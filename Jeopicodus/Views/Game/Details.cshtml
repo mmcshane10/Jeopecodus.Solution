@@ -2,7 +2,6 @@
 @using Jeopicodus.Models
 @using System.Security.Claims
 @model GameDetailsViewModel
-
 <div class="jumbotron">
     <img src="~/img/logo.png">
 </div>
@@ -18,7 +17,7 @@
             TeamList.Add(team);
         }
         <div class="col-sm" id="team1-scoreboard">
-            <h5><span class="team isactive">@TeamList[0].TeamName</span><span class="scoreboard-score">@Model.Game.ScoreTeam1</span></h5>
+            <h5><span class="team">@TeamList[0].TeamName</span><span class="scoreboard-score">@Model.Game.ScoreTeam1</span></h5>
         </div>
         <div class="col-sm" id="team2-scoreboard">
             <h5><span class="scoreboard-score">@Model.Game.ScoreTeam2</span><span class="team">@TeamList[1].TeamName</span></h5>
@@ -114,7 +113,21 @@
                 .build();
     var playerTeamName = '@Model.TeamName';
     var playerTeamId = '@Model.TeamId';
+    let theActiveTeam = '@Model.ActiveTeam';
+    let theOtherTeam = '';
     hubConnection.start();
+
+    function underLineActiveTeam() {
+        var teamNameEls = $(document).find('.team').toArray();
+        for(let i = 0; i < teamNameEls.length; i++){
+            var el = teamNameEls[i];
+            if($(el).text() == theActiveTeam && $(el).attr('class').indexOf('isactive') == -1) {
+                $(el).addClass("isactive");
+            } else if ($(el).text() != theActiveTeam) {
+                $(el).removeClass("isactive");
+            }
+        }
+    }
 
     function buzzIn()
     {
@@ -127,7 +140,20 @@
         hubConnection.invoke("NextQuestion", playerTeamId); 
     }
 
+    function UpdateActiveTeam(activeTeamName) {
+        theActiveTeam = activeTeamName;
+        underLineActiveTeam();
+    }
+
     $(document).ready(function(){
+        underLineActiveTeam();
+        var teamNameEls = $(document).find('.team').toArray();
+        for(let i = 0; i < teamNameEls.length; i++){
+            var el = teamNameEls[i];
+            if($(el).text() != playerTeamName) {
+                theOtherTeam = $(el).text();
+            } 
+        }
         $(".col-sm").click(function(event){
             if(($(this).attr('class').indexOf('cat-q') !== -1) && ($(this).find(".card").attr('class').indexOf('answered') === -1)) {
                 var questionId = event.target.closest(".card").id;
@@ -189,10 +215,13 @@
                     </form>
                     `
                 );
+                theActiveTeam = playerTeamName;
             }
             else {
                 $('.modal-footer').text("Waiting for other team to answer");
+                theActiveTeam = theOtherTeam;
             }
+            underLineActiveTeam();
         });
 
         hubConnection.on('closeModal', function(){
@@ -203,28 +232,35 @@
             $('#team1-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam1);
             $('#team2-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam2);
             hubConnection.invoke("UpdateTeamTurn", updatedScoreModel.activeTeamId);
-            $('.team').toggleClass("isactive");
+            if(updatedScoreModel.activeTeamId == playerTeamId) {
+                theActiveTeam = playerTeamName;
+            } else {
+                theActiveTeam = theOtherTeam;
+            }
+            underLineActiveTeam();
             $('.modal').modal("hide");
         });
 
         hubConnection.on('otherTeamToTry', updatedScoreModel => {
             $('#team1-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam1);
             $('#team2-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam2);
-            $('.team').toggleClass("isactive");
             if(updatedScoreModel.activeTeamId.trim() === playerTeamId.trim()) {
                 $('.modal-footer').html(
                     `
-                    <form id="answer-question" method="post">
+                    <form id="other-attempt" method="post">
                         <input id="answer-box" name="answer-box" type="text" placeholder="Enter Your Answer">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                     <button type="button" onclick="passToNextQuestion()" class="btn btn-warning">Pass</button>
                     `
                 );
+                theActiveTeam = playerTeamName;
             }
             else {
                 $('.modal-footer').text("Waiting for other team to answer");
+                theActiveTeam = theOtherTeam;
             }
+            underLineActiveTeam();
         });
 
         function getQuestionAnswer(id) {
@@ -247,6 +283,10 @@
                 }
             }
             return "Question Not Found";
+        }
+
+        function setOtherTeam() {
+            
         }
 
     });
