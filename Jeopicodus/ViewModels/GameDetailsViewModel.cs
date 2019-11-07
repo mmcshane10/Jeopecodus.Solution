@@ -12,5 +12,7 @@ namespace Jeopicodus.ViewModels
         public string TeamId { get; set; }
         public List<string> Categories { get; set; }
         public List<string> TeamNames { get; set; }
+
+        public string ActiveTeam { get; set; }
     }
 }

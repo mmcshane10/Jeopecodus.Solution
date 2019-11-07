@@ -298,22 +298,25 @@ namespace Jeopicodus.Models
             }
             int teamIndex = TeamList.IndexOf(game.Teams.FirstOrDefault(t => t.TeamId.ToString() == teamId));
             thisTeam.IsTurn = false;
+            string nextTeamId = "";
             if (teamIndex == 0)
             {
                 game.ScoreTeam1 -= Int32.Parse(valueToLose);
                 TeamList[1].IsTurn = false;
+                nextTeamId = TeamList[1].TeamId.ToString();
             }
             else
             {
                 game.ScoreTeam2 -= Int32.Parse(valueToLose);
                 TeamList[0].IsTurn = false;
+                nextTeamId = TeamList[0].TeamId.ToString();
             }
             _db.Entry(TeamList[0]).State = EntityState.Modified;
             _db.Entry(TeamList[1]).State = EntityState.Modified;
             _db.Entry(game).State = EntityState.Modified;
             _db.SaveChanges();
 
-            Clients.All.SendAsync("updateScores", new UpdateScoresModel() { Game = game, ActiveTeamId = teamId });
+            Clients.All.SendAsync("updateScores", new UpdateScoresModel() { Game = game, ActiveTeamId = nextTeamId });
         }
 
         public void NextQuestion(string teamId)
