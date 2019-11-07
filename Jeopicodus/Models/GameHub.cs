@@ -117,5 +117,10 @@ namespace Jeopicodus.Models
             Clients.All.SendAsync("showQuestion", questionId);
 
         }
+        public async Task GameAdded()
+        {
+            List<Game> foundGames = _db.Games.ToList();
+            await Clients.All.SendAsync("ShowGames", foundGames);
+        }
     }
 }

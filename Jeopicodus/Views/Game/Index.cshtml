@@ -16,8 +16,58 @@
             </form>
         </div>
     </div>
+    <div id="WriteGames">
 
-    @foreach(Game game in Model.Games)
+    </div>
+</div>
+
+<script type="text/javascript">
+    const hubConnection = new signalR.HubConnectionBuilder()
+                    .withUrl("/gameHub")
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build();
+    var playerId = '@Model.User.Id';
+    hubConnection.start();
+    $(document).ready(function(){
+        writeGames(@Model.Games);
+        hubConnection.invoke('JoinHub', playerId);
+        hubConnection.on("ShowGames",foundGames =>{
+            writeGames(gameData);
+        });
+        $('.team-one .join-team').click(function(){
+            getTeamData(this);
+            hubConnection.invoke("GameAdded");
+        });
+        $('.team-two .join-team').click(function(){
+            getTeamData(this);
+            hubConnection.invoke("GameAdded");
+        });
+        $('.team-two-name').submit(function(event){
+            event.preventDefault();
+            const gameIdString = $(this).closest(".card").attr("id");
+            const gameId = gameIdString.substring(gameIdString.indexOf("-")+1);
+            const team2Name = $('#team2name-' + gameId).val();
+            hubConnection.invoke('CreateTeam', gameId + "#" + team2Name + "#" + playerId);
+            hubConnection.invoke("GameAdded");
+        });
+        $('#team-one-name').submit(function(event){
+            event.preventDefault();
+            const team1Name = $('#team1name').val();
+            hubConnection.invoke('CreateGame', team1Name + "#" + playerId);
+            hubConnection.invoke("GameAdded");
+        });
+
+        function getTeamData(element) {
+            const gameIdString = $(element).closest(".card").attr("id");
+            const gameId = gameIdString.substring(gameIdString.indexOf("-")+1);
+            const teamIdString = $(element).closest(".card-body").find(".members").attr("id");
+            const teamId = teamIdString.substring(teamIdString.indexOf("-")+1);
+            hubConnection.invoke('JoinTeam', gameId + "#" + teamId + "#" + playerId);
+        }
+
+    });
+    function writeGames(@Model.Games){
+       $("#showJSGames").html(@foreach(Game game in Model.Games)
     {
         var count = game.Teams.Count;
         var teamOrder = "one";
@@ -56,7 +106,7 @@
                     } 
                     else
                     {
-                        <div class="col-sm">
+                        <div id="WriteTeams" class="col-sm">
                             <div class="card-body team-@teamOrder">
                                 <h5 class="card-title">@team.TeamName</h5>
                                 <hr>
@@ -69,44 +119,5 @@
                 }
             </div>
         </div>
-    }
-</div>
-
-<script type="text/javascript">
-    const hubConnection = new signalR.HubConnectionBuilder()
-                    .withUrl("/gameHub")
-                    .configureLogging(signalR.LogLevel.Information)
-                    .build();
-    var playerId = '@Model.User.Id';
-    hubConnection.start();
-    $(document).ready(function(){
-        hubConnection.invoke('JoinHub', playerId);
-        $('.team-one .join-team').click(function(){
-            getTeamData(this);
-        });
-        $('.team-two .join-team').click(function(){
-            getTeamData(this);
-        });
-        $('.team-two-name').submit(function(event){
-            event.preventDefault();
-            const gameIdString = $(this).closest(".card").attr("id");
-            const gameId = gameIdString.substring(gameIdString.indexOf("-")+1);
-            const team2Name = $('#team2name-' + gameId).val();
-            hubConnection.invoke('CreateTeam', gameId + "#" + team2Name + "#" + playerId);
-        });
-        $('#team-one-name').submit(function(event){
-            event.preventDefault();
-            const team1Name = $('#team1name').val();
-            hubConnection.invoke('CreateGame', team1Name + "#" + playerId);
-        });
-
-        function getTeamData(element) {
-            const gameIdString = $(element).closest(".card").attr("id");
-            const gameId = gameIdString.substring(gameIdString.indexOf("-")+1);
-            const teamIdString = $(element).closest(".card-body").find(".members").attr("id");
-            const teamId = teamIdString.substring(teamIdString.indexOf("-")+1);
-            hubConnection.invoke('JoinTeam', gameId + "#" + teamId + "#" + playerId);
-        }
-
-    });
+    })};
 </script>
