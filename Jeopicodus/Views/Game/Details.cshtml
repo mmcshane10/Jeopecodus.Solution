@@ -18,10 +18,10 @@
             TeamList.Add(team);
         }
         <div class="col-sm" id="team1-scoreboard">
-            <h5>@TeamList[0].TeamName<span class="scoreboard-score">@Model.Game.ScoreTeam1</span></h5>
+            <h5><span class="team isactive">@TeamList[0].TeamName</span><span class="scoreboard-score">@Model.Game.ScoreTeam1</span></h5>
         </div>
         <div class="col-sm" id="team2-scoreboard">
-            <h5><span class="scoreboard-score">@Model.Game.ScoreTeam2</span>@TeamList[1].TeamName</h5>
+            <h5><span class="scoreboard-score">@Model.Game.ScoreTeam2</span><span class="team">@TeamList[1].TeamName</span></h5>
         </div>
     </div>
     <div id="gameboard">
@@ -203,12 +203,14 @@
             $('#team1-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam1);
             $('#team2-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam2);
             hubConnection.invoke("UpdateTeamTurn", updatedScoreModel.activeTeamId);
+            $('.team').toggleClass("isactive");
             $('.modal').modal("hide");
         });
 
         hubConnection.on('otherTeamToTry', updatedScoreModel => {
             $('#team1-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam1);
             $('#team2-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam2);
+            $('.team').toggleClass("isactive");
             if(updatedScoreModel.activeTeamId.trim() === playerTeamId.trim()) {
                 $('.modal-footer').html(
                     `
