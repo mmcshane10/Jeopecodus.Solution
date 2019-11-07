@@ -33,6 +33,7 @@
         writeGames(data);
         hubConnection.invoke('JoinHub', playerId);
         hubConnection.on("ShowGames",gameData =>{
+            console.log(gameData);
             writeGames(gameData);
         });
         $('.team-one .join-team').click(function(){
@@ -66,35 +67,35 @@
             hubConnection.invoke('JoinTeam', gameId + "#" + teamId + "#" + playerId);
         }
 
-    });
     function writeGames(htmlToInsert){
-       $("#showJSGames").innerHTML(htmlToInsert);
-    };
-       var htmlToInsert = 
-       " <div>
-       @foreach(Game game in Model.Games)
+        if(typeof htmlToInsert == 'string')
         {
-        var count = game.Teams.Count;
-        var teamOrder = "one";
-        var counter = 0;
-        
-        <div id="gameId-@game.GameId" class="card">
-            <div class="row">
-                @foreach (Team team in game.Teams)
-                {
-                    counter++;
-                    @if(counter == 2)
-                    {
-                        teamOrder = "two";
-                    }
+            htmlToInsert = JSON.parse(htmlToInsert);
+        }
+        let htmlToWrite = "";
+        for(let i = 0; i < htmlToInsert.length; i++){
+            htmlToWrite += WriteGameHtml(htmlToInsert[i]);
+        }
+        $("#WriteGames").html(`<div>${htmlToWrite}</div>`);
+    }
 
-                    @if(count == 1)
-                    {
+        function WriteGameHtml(game){
+            var count = game.Teams == null ? game.teams.length: game.Teams.length;
+            var teamOrder = "one";
+            var counter = 0;
+            const gameId = game.GameId == null ?  game.gameId : game.GameId;
+            let html = "";
+            let team1 = game.Teams == null ? game.teams[0] : game.Teams[0];
+
+            if(count == 1){
+            html = `
+                <div id="gameId-${gameId}" class="card">
+                    <div class="row">
                         <div class="col-sm">
                             <div class="card-body team-one">
-                                <h5 class="card-title">@team.TeamName</h5>
+                                <h5 class="card-title">${team1.TeamName == null ? team1.teamName : team1.TeamName}</h5>
                                 <hr>
-                                <div id="team-@team.TeamId" class="members team-one-members">
+                                <div id="team-${team1.TeamId == null ? team1.teamId : team1.TeamId}" class="members team-one-members">
                                 </div>
                                 <button class="join-team btn btn-primary">Join Team</button>
                             </div>
@@ -102,29 +103,44 @@
                         <div class="col-sm">
                             <div class="card-body team-two">
                                 <form class="team-two-name" method="post">
-                                    <label for="team2name-@game.GameId">Team Name:</label>
-                                    <input id="team2name-@game.GameId" name="team2name" type="text">
+                                    <label for="team2name-${gameId}">Team Name:</label>
+                                    <input id="team2name-${gameId}" name="team2name" type="text">
                                     <button type="submit" class="btn btn-primary">Add Team</button>
                                 </form>
                             </div>
                         </div>
-                    } 
-                    else
-                    {
-                        <div id="WriteTeams" class="col-sm">
-                            <div class="card-body team-@teamOrder">
-                                <h5 class="card-title">@team.TeamName</h5>
-                                <hr>
-                                <div id="team-@team.TeamId" class="members team-@teamOrder-members">
+                    </div>
+                </div>
+                `;
+                } else if (count == 2) {
+                    let team2 = game.Teams == null ? game.teams[1] : game.Teams[1];
+                    html = `
+                    <div id="gameId-${gameId}" class="card">
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="card-body team-one">
+                                    <h5 class="card-title">${team1.TeamName == null ? team1.teamName : team1.TeamName}</h5>
+                                    <hr>
+                                    <div id="team-${team1.TeamId == null ? team1.teamId : team1.TeamId}" class="members team-one-members">
+                                    </div>
+                                    <button class="join-team btn btn-primary">Join Team</button>
                                 </div>
-                                <button class="join-team btn btn-primary">Join Team</button>
+                            </div>
+                            <div class="col-sm">
+                                <div class="card-body team-two">
+                                    <h5 class="card-title">${team2.TeamName == null ? team2.teamName : team2.TeamName}</h5>
+                                    <hr>
+                                    <div id="team-${team2.TeamId == null ? team2.teamId : team2.TeamId}" class="members team-two-members">
+                                    </div>
+                                    <button class="join-team btn btn-primary">Join Team</button>
+                                </div>
                             </div>
                         </div>
-                    }
+                    </div>
+                    `;
                 }
-            </div>
-        </div>
-    };
-    </div>"
+            return html;
+        }
+    });
  
 </script>

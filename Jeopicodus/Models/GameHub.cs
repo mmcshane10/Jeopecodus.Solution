@@ -117,10 +117,10 @@ namespace Jeopicodus.Models
             Clients.All.SendAsync("showQuestion", questionId);
 
         }
-        public async Task GameAdded()
+        public void GameAdded()
         {
-            List<Game> gameData = _db.Games.ToList();
-            await Clients.All.SendAsync("ShowGames", gameData);
+            List<Game> gameData = _db.Games.Include(g => g.Teams).ToList();
+            Clients.All.SendAsync("ShowGames", gameData);
         }
     }
 }
