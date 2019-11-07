@@ -42,6 +42,9 @@ _The purpose of this application is to allow two teams to compete at the game of
 ## Setup/Installation Requirements
 _Simply run this application in your browser. Create a user, log in, and join or create a game to start playing. Communicate with a friend to join in the same game from different clients and play together live._
 
+## Game Location  
+* https://playjeopicodus.azurewebsites.net
+
 ## Known Bugs
 
 _There are no known bugs at this time._
@@ -56,7 +59,7 @@ Devin Cooley at dcooley1350@gmail.com._
 
 ## Technologies Used
 
-_This is a .NET Core MVC application written primarily in C#. JavaScript, HTML and CSS were implemented alongside C#. Databasing was accomplished with Mysql, assisted by Entity Framework. Authorization was handled using Identity for .NET Core. This app features live data rendering with use of SignalR for .NET. View this application in your browser or another client.
+_This is a .NET Core MVC application written primarily in C#. JavaScript, HTML and CSS were implemented alongside C#. Databasing was accomplished with Mysql, assisted by Entity Framework. Authorization was handled using Identity for .NET Core. This app features live data rendering with use of SignalR for .NET. This application and the accompanying database are hosted with Microsoft Azure Cloud Services. View this application in your browser or another client.
 
 ### License
 
