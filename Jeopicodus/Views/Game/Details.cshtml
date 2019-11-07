@@ -93,7 +93,7 @@
                         <div class="modal-body">
                         </div>
                         <div class="modal-footer">
-                            <button id="modal-btn" class="btn btn-default" aria-hidden="true" data-dismiss="modal">
+                            <button id="modal-btn" class="btn btn-default" onclick="buzzIn()" aria-hidden="true">
                                 Answer
                             </button>
                         </div>
@@ -114,12 +114,18 @@
     var playerTeam = '@Model.UserTeam';
     hubConnection.start();
 
+    function buzzIn()
+    {
+        var classes = $(".modal-body").attr('class');
+        var questionId = classes.substring(classes.lastIndexOf("-")+1);
+        hubConnection.invoke('AnswerQuestion', questionId+"#" + playerTeam);
+    }
+
     $(document).ready(function(){
         $(".col-sm").click(function(event){
             if(($(this).attr('class').indexOf('cat-q') !== -1) && ($(this).find(".card").attr('class').indexOf('answered') === -1)) {
                 var questionId = event.target.closest(".card").id;
                 hubConnection.invoke('QuestionClicked', questionId +"#" + playerTeam);
-
             }
         });
         $(".modal").each(function(l){
@@ -129,12 +135,39 @@
             })
         });
 
+        $(".modal").submit(function(event){
+            event.preventDefault();
+        });
+
         hubConnection.on('showQuestion', id => {
-            console.log(id);
             $(document).find("#"+id+".card").addClass("answered");
             var question = getQuestion(id);
+            $(".modal-body").addClass("question-"+id);
             $(".modal-body").text(question);
+            $('.modal-footer').html(
+                `
+                <button id="modal-btn" class="btn btn-default" onclick="buzzIn()" aria-hidden="true">
+                    Answer
+                </button>
+                `
+            );
             $(".modal").modal('show');
+        });
+
+        hubConnection.on('buzzedIn', activeTeam => {
+            if(activeTeam.trim() === playerTeam.trim()) {
+                $('.modal-footer').html(
+                    `
+                    <form id="answer-question" method="post">
+                        <input id="answer-box" name="answer-box" type="text" placeholder="Enter Your Answer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    `
+                );
+            }
+            else {
+                $('.modal-footer').text("Waiting for other team to answer");
+            }
         });
 
         function getQuestion(id){
@@ -147,6 +180,7 @@
             }
             return "Question Not Found";
         }
+
     });
     
 </script>

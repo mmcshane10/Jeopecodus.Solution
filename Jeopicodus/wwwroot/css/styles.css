@@ -116,3 +116,7 @@ h1, h2
 {
     color: #0709CE;
 }
+
+#bg-yellow {
+    background-color: yellow;
+}
