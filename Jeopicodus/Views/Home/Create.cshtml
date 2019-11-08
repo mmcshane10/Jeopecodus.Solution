@@ -1,0 +1,35 @@
+@using Jeopicodus.ViewModels
+@model FillInTheBlankViewModel
+
+<h2>Add A Question</h2>
+
+<div class="form-group col-md-6">
+@using (Html.BeginForm())
+{
+    @Html.LabelFor(model => model.Category, "Category: ")
+    <select id="Category" name="Category" class="form-control">
+        <option value="1">Generak</option>
+        <option value="2">JavaScript</option>
+        <option value="3">C#</option>
+        <option value="4">Testing</option>
+        <option value="5">Git</option>
+    </select><br>
+
+    @Html.LabelFor(model => model.Difficulty, "Difficulty: ")
+    <select id="Difficulty" name="Difficulty" class="form-control">
+        <option value="1">Easy</option>
+        <option value="2">Medium</option>
+        <option value="3">Hard</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select><br>
+
+    @Html.LabelFor(model => model.Prompt, "Prompt: ")
+    @Html.TextBoxFor(model => model.Prompt, new {@class = "form-control"})
+
+    @Html.LabelFor(model => model.Answer, "Answer: ")
+    @Html.TextBoxFor(model => model.Answer, new {@class = "form-control"})
+
+    <input type="submit" value="Add Question" class="btn btn-info" />
+
+}

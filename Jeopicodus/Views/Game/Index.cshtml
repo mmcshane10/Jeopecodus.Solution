@@ -1,0 +1,147 @@
+@using System.Collections.Generic
+@using Jeopicodus.ViewModels
+@using Jeopicodus.Models
+@model GameIndexViewModel
+
+<h1>Games</h1>
+
+<div class="flex-container">
+    <div class="card">
+        <div class="card-body">
+            <form id="team-one-name" method="post">
+                <div class="form-control">
+                    <input id="team1name" name="team1name" type="text" placeholder="Team Name">
+                </div>
+                <button type="submit" class="btn btn-primary">Create Team</button>
+            </form>
+        </div>
+    </div>
+    <div id="WriteGames">
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    var data = '@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Games) as string)'
+    const hubConnection = new signalR.HubConnectionBuilder()
+                    .withUrl("/gameHub")
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build();
+    var playerId = '@Model.User.Id';
+    hubConnection.start();
+    $(document).ready(function(){
+        writeGames(data);
+        hubConnection.invoke('JoinHub', playerId);
+        hubConnection.on("ShowGames",gameData =>{
+            console.log(gameData);
+            writeGames(gameData);
+        });
+        $('.team-one .join-team').click(function(){
+            getTeamData(this);
+            hubConnection.invoke("GameAdded");
+        });
+        $('.team-two .join-team').click(function(){
+            getTeamData(this);
+            hubConnection.invoke("GameAdded");
+        });
+        $('.team-two-name').submit(function(event){
+            event.preventDefault();
+            const gameIdString = $(this).closest(".card").attr("id");
+            const gameId = gameIdString.substring(gameIdString.indexOf("-")+1);
+            const team2Name = $('#team2name-' + gameId).val();
+            hubConnection.invoke('CreateTeam', gameId + "#" + team2Name + "#" + playerId);
+            hubConnection.invoke("GameAdded");
+        });
+        $('#team-one-name').submit(function(event){
+            event.preventDefault();
+            const team1Name = $('#team1name').val();
+            hubConnection.invoke('CreateGame', team1Name + "#" + playerId);
+            hubConnection.invoke("GameAdded");
+        });
+
+        function getTeamData(element) {
+            const gameIdString = $(element).closest(".card").attr("id");
+            const gameId = gameIdString.substring(gameIdString.indexOf("-")+1);
+            const teamIdString = $(element).closest(".card-body").find(".members").attr("id");
+            const teamId = teamIdString.substring(teamIdString.indexOf("-")+1);
+            hubConnection.invoke('JoinTeam', gameId + "#" + teamId + "#" + playerId);
+        }
+
+    function writeGames(htmlToInsert){
+        if(typeof htmlToInsert == 'string')
+        {
+            htmlToInsert = JSON.parse(htmlToInsert);
+        }
+        let htmlToWrite = "";
+        for(let i = 0; i < htmlToInsert.length; i++){
+            htmlToWrite += WriteGameHtml(htmlToInsert[i]);
+        }
+        $("#WriteGames").html(`<div>${htmlToWrite}</div>`);
+    }
+
+        function WriteGameHtml(game){
+            var count = game.Teams == null ? game.teams.length: game.Teams.length;
+            var teamOrder = "one";
+            var counter = 0;
+            const gameId = game.GameId == null ?  game.gameId : game.GameId;
+            let html = "";
+            let team1 = game.Teams == null ? game.teams[0] : game.Teams[0];
+
+            if(count == 1){
+            html = `
+                <div id="gameId-${gameId}" class="card">
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="card-body team-one">
+                                <h5 class="card-title">${team1.TeamName == null ? team1.teamName : team1.TeamName}</h5>
+                                <hr>
+                                <div id="team-${team1.TeamId == null ? team1.teamId : team1.TeamId}" class="members team-one-members">
+                                </div>
+                                <button class="join-team btn btn-primary">Join Team</button>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="card-body team-two">
+                                <form class="team-two-name" method="post">
+                                    <label for="team2name-${gameId}">Team Name:</label>
+                                    <input id="team2name-${gameId}" name="team2name" type="text">
+                                    <button type="submit" class="btn btn-primary">Add Team</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+                } else if (count == 2) {
+                    let team2 = game.Teams == null ? game.teams[1] : game.Teams[1];
+                    html = `
+                    <div id="gameId-${gameId}" class="card">
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="card-body team-one">
+                                    <h5 class="card-title">${team1.TeamName == null ? team1.teamName : team1.TeamName}</h5>
+                                    <hr>
+                                    <div id="team-${team1.TeamId == null ? team1.teamId : team1.TeamId}" class="members team-one-members">
+                                    </div>
+                                    <button class="join-team btn btn-primary">Join Team</button>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="card-body team-two">
+                                    <h5 class="card-title">${team2.TeamName == null ? team2.teamName : team2.TeamName}</h5>
+                                    <hr>
+                                    <div id="team-${team2.TeamId == null ? team2.teamId : team2.TeamId}" class="members team-two-members">
+                                    </div>
+                                    <button class="join-team btn btn-primary">Join Team</button>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/Game/Details/${gameId}"><button class="btn btn-success">Start Game</button></a>
+                    </div>
+                    `;
+                }
+            return html;
+        }
+    });
+ 
+</script>

@@ -1,0 +1,294 @@
+@using Jeopicodus.ViewModels
+@using Jeopicodus.Models
+@using System.Security.Claims
+@model GameDetailsViewModel
+<div class="jumbotron">
+    <img src="~/img/logo.png">
+</div>
+
+<div class="container">
+    <div id="scoreboard" class="row">
+        @{
+            List<Team> TeamList = new List<Team>{};
+                
+        }
+        @foreach(Team team in Model.Game.Teams)
+        {
+            TeamList.Add(team);
+        }
+        <div class="col-sm" id="team1-scoreboard">
+            <h5><span class="team">@TeamList[0].TeamName</span><span class="scoreboard-score">@Model.Game.ScoreTeam1</span></h5>
+        </div>
+        <div class="col-sm" id="team2-scoreboard">
+            <h5><span class="scoreboard-score">@Model.Game.ScoreTeam2</span><span class="team">@TeamList[1].TeamName</span></h5>
+        </div>
+    </div>
+    <div id="gameboard">
+        <div id="catagories" class="row">
+            <div class="col-sm cat-1">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[0], QuestionId = 0 })
+            </div>
+            <div class="col-sm cat-2">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[1], QuestionId = 0 })
+            </div>
+            <div class="col-sm cat-3">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[2], QuestionId = 0 })
+            </div>
+            <div class="col-sm cat-4">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[3], QuestionId = 0 })
+            </div>
+            <div class="col-sm cat-5">
+                @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = Model.Categories[4], QuestionId = 0 })
+            </div>
+        </div>
+        <hr class="game-bar">
+        @for(int i = 1; i <=5; i++)
+        {
+            var difficulty = "Easy";
+            var index = 0;
+            if(i % 2 == 0)
+            {
+                index = 1;
+            }
+            if(i > 2 && i < 5)
+            {
+                difficulty = "Medium";
+            }
+            else if (i == 5){
+                difficulty = "Hard";
+            }
+            Question q1 = @Model.Questions[@Model.Categories[0] + "_" + @difficulty][index];
+            Question q2 = @Model.Questions[@Model.Categories[1] + "_" + @difficulty][index];
+            Question q3 = @Model.Questions[@Model.Categories[2] + "_" + @difficulty][index];
+            Question q4 = @Model.Questions[@Model.Categories[3] + "_" + @difficulty][index];
+            Question q5 = @Model.Questions[@Model.Categories[4] + "_" + @difficulty][index];
+
+            <div id="level-@i" class="row">
+                <div class="col-sm cat-q-1">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q1.Id })
+                </div>
+                <div class="col-sm cat-q-2">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q2.Id })
+                </div>
+                <div class="col-sm cat-q-3">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q3.Id })
+                </div>
+                <div class="col-sm cat-q-4">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q4.Id })
+                </div>
+                <div class="col-sm cat-q-5">
+                    @await Html.PartialAsync("_QuestionCard", new QuestionCardViewModel(){Value = (i*100).ToString(), QuestionId = @q5.Id })
+                </div>
+            </div>
+        }
+        <div class="modalCards">
+            <div id="questionModal" class="modal" data-easein="whirlIn"  tabindex="-1" role="dialog" aria-labelledby="questionModal" aria-hidden="true">
+                <div class="modal-dialog h-100 d-flex flex-column justify-content-center my-0" >
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">
+                                Question
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                            <button id="modal-btn" class="btn btn-default" onclick="buzzIn()" aria-hidden="true">
+                                Answer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.ui.min.js"></script>
+
+<script type="text/javascript">
+    const hubConnection = new signalR.HubConnectionBuilder()
+                .withUrl("/gameHub")
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+    var playerTeamName = '@Model.TeamName';
+    var playerTeamId = '@Model.TeamId';
+    let theActiveTeam = '@Model.ActiveTeam';
+    let theOtherTeam = '';
+    hubConnection.start();
+
+    function underLineActiveTeam() {
+        var teamNameEls = $(document).find('.team').toArray();
+        for(let i = 0; i < teamNameEls.length; i++){
+            var el = teamNameEls[i];
+            if($(el).text() == theActiveTeam && $(el).attr('class').indexOf('isactive') == -1) {
+                $(el).addClass("isactive");
+            } else if ($(el).text() != theActiveTeam) {
+                $(el).removeClass("isactive");
+            }
+        }
+    }
+
+    function buzzIn()
+    {
+        var classes = $(".modal-body").attr('class');
+        var questionId = classes.substring(classes.lastIndexOf("-")+1);
+        hubConnection.invoke('AnswerQuestion', questionId+"#" + playerTeamName);
+    }
+
+    function passToNextQuestion() {
+        hubConnection.invoke("NextQuestion", playerTeamId); 
+    }
+
+    function UpdateActiveTeam(activeTeamName) {
+        theActiveTeam = activeTeamName;
+        underLineActiveTeam();
+    }
+
+    $(document).ready(function(){
+        underLineActiveTeam();
+        var teamNameEls = $(document).find('.team').toArray();
+        for(let i = 0; i < teamNameEls.length; i++){
+            var el = teamNameEls[i];
+            if($(el).text() != playerTeamName) {
+                theOtherTeam = $(el).text();
+            } 
+        }
+        $(".col-sm").click(function(event){
+            if(($(this).attr('class').indexOf('cat-q') !== -1) && ($(this).find(".card").attr('class').indexOf('answered') === -1)) {
+                var questionId = event.target.closest(".card").id;
+                hubConnection.invoke('QuestionClicked', questionId +"#" + playerTeamName);
+            }
+        });
+        $(".modal").each(function(l){
+            $(this).on("show.bs.modal", function(l){
+                var o=$(this).attr("data-easein");
+                $(".modal-dialog").velocity("transition."+o)
+            })
+        });
+
+        $(".modal").submit(function(event){
+            event.preventDefault();
+            var classes = $(".modal-body").attr('class');
+            var questionId = classes.substring(classes.lastIndexOf("-")+1);
+            const answer = $("#answer-box").val().trim().toLowerCase();
+            var trueAnswer = getQuestionAnswer(questionId).trim().toLowerCase();
+            const value = $(document).find("#"+questionId+".card").text();
+            if($('.modal form').attr('id') == 'answer-question'){
+                if(answer === trueAnswer) {
+                    hubConnection.invoke('CorrectAnswer', playerTeamId +"#"+value);
+                } else {
+                    hubConnection.invoke('WrongAnswer', playerTeamId +"#"+value);
+                }
+            }
+            else {
+                if(answer === trueAnswer) {
+                    hubConnection.invoke('CorrectAnswer', playerTeamId +"#"+value);
+                } else {
+                    hubConnection.invoke('WrongAnswerNextQuestion', playerTeamId +"#"+value);
+                }
+            }
+        });
+
+        hubConnection.on('showQuestion', id => {
+            $(document).find("#"+id+".card").addClass("answered");
+            var question = getQuestion(id);
+            $(".modal-body").addClass("question-"+id);
+            $(".modal-body").text(question);
+            $('.modal-footer').html(
+                `
+                <button id="modal-btn" class="btn btn-default" onclick="buzzIn()" aria-hidden="true">
+                    Answer
+                </button>
+                `
+            );
+            $(".modal").modal('show');
+        });
+
+        hubConnection.on('buzzedIn', activeTeam => {
+            if(activeTeam.trim() === playerTeamName.trim()) {
+                $('.modal-footer').html(
+                    `
+                    <form id="answer-question" method="post">
+                        <input id="answer-box" name="answer-box" type="text" placeholder="Enter Your Answer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    `
+                );
+                theActiveTeam = playerTeamName;
+            }
+            else {
+                $('.modal-footer').text("Waiting for other team to answer");
+                theActiveTeam = theOtherTeam;
+            }
+            underLineActiveTeam();
+        });
+
+        hubConnection.on('closeModal', function(){
+            $(".modal").modal('hide');
+        });
+
+        hubConnection.on('updateScores', updatedScoreModel => {
+            $('#team1-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam1);
+            $('#team2-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam2);
+            hubConnection.invoke("UpdateTeamTurn", updatedScoreModel.activeTeamId);
+            if(updatedScoreModel.activeTeamId == playerTeamId) {
+                theActiveTeam = playerTeamName;
+            } else {
+                theActiveTeam = theOtherTeam;
+            }
+            underLineActiveTeam();
+            $('.modal').modal("hide");
+        });
+
+        hubConnection.on('otherTeamToTry', updatedScoreModel => {
+            $('#team1-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam1);
+            $('#team2-scoreboard .scoreboard-score').text(updatedScoreModel.game.scoreTeam2);
+            if(updatedScoreModel.activeTeamId.trim() === playerTeamId.trim()) {
+                $('.modal-footer').html(
+                    `
+                    <form id="other-attempt" method="post">
+                        <input id="answer-box" name="answer-box" type="text" placeholder="Enter Your Answer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    <button type="button" onclick="passToNextQuestion()" class="btn btn-warning">Pass</button>
+                    `
+                );
+                theActiveTeam = playerTeamName;
+            }
+            else {
+                $('.modal-footer').text("Waiting for other team to answer");
+                theActiveTeam = theOtherTeam;
+            }
+            underLineActiveTeam();
+        });
+
+        function getQuestionAnswer(id) {
+            var questionList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Game.Questions) as string);
+            
+            for(let i = 0; i < questionList.length; i++){
+                if(questionList[i].Id == id){
+                    return questionList[i].Answer;
+                }
+            }
+            return "Question Not Found";
+        }
+
+        function getQuestion(id){
+            var questionList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Game.Questions) as string);
+            
+            for(let i = 0; i < questionList.length; i++){
+                if(questionList[i].Id == id){
+                    return questionList[i].Prompt;
+                }
+            }
+            return "Question Not Found";
+        }
+
+        function setOtherTeam() {
+            
+        }
+
+    });
+    
+</script>

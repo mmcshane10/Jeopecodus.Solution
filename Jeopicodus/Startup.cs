@@ -18,12 +18,18 @@ namespace Jeopicodus
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-            .SetBasePath(env.ContentRootPath)
-            .AddJsonFile("appsettings.json");
-            Configuration = configuration;
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+            {
+                Configuration = configuration;
+            }
+            else{
+                var builder = new ConfigurationBuilder()
+                    .SetBasePath(env.ContentRootPath)
+                    .AddJsonFile("appsettings.json");
+                Configuration = builder.Build();
+            }
         }
 
         public IConfiguration Configuration { get; set; }
@@ -31,22 +37,36 @@ namespace Jeopicodus
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
 
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+                services.AddEntityFrameworkSqlServer()
+                .AddDbContext<JeopicodusContext>(options => options
+                .UseSqlServer(Configuration.GetConnectionString("MyDbConnection")));
+            else{
             services.AddEntityFrameworkMySql()
                 .AddDbContext<JeopicodusContext>(options => options
                 .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
+            }
+
+            services.BuildServiceProvider().GetService<JeopicodusContext>().Database.Migrate();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<JeopicodusContext>()
                 .AddDefaultTokenProviders();
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 0;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredUniqueChars = 0;
+            });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,17 +74,17 @@ namespace Jeopicodus
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
             else
             {
+                app.UseDeveloperExceptionPage();
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
@@ -75,6 +95,12 @@ namespace Jeopicodus
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<GameHub>("/gamehub");
+                routes.MapHub<GameHub>("/playhub");
             });
         }
     }
